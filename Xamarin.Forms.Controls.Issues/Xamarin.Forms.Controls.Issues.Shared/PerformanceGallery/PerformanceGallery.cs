@@ -25,7 +25,6 @@ namespace Xamarin.Forms.Controls.Issues
 
 		PerformanceTracker _PerformanceTracker = new PerformanceTracker();
 		int _TestNumber = 0;
-		int _MinTimeToWait = 0;
 		List<PerformanceScenario> _TestCases = new List<PerformanceScenario>();
 		PerformanceProvider _PerformanceProvider = new PerformanceProvider();
 		PerformanceViewModel ViewModel => BindingContext as PerformanceViewModel;
