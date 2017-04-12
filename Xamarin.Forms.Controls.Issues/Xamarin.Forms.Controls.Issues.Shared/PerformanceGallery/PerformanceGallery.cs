@@ -22,6 +22,10 @@ namespace Xamarin.Forms.Controls.Issues
 		const string Fail = "FAIL";
 		const string Next = "Next Scenario";
 		const string Pending = "PENDING";
+		const double Threshold = 0.25;
+
+		double TopThreshold => 1 + Threshold;
+		double BottomThreshold = 1 - Threshold;
 
 		PerformanceTracker _PerformanceTracker = new PerformanceTracker();
 		int _TestNumber = 0;
@@ -55,7 +59,7 @@ namespace Xamarin.Forms.Controls.Issues
 			ViewModel.RunTest(_TestCases[_TestNumber++]);
 
 			// arbitrary delay to wait for the view to render
-			await Task.Delay((int)Math.Round(ViewModel.ExpectedRenderTime * 1.5));
+			await Task.Delay((int)Math.Round(ViewModel.ExpectedRenderTime * TopThreshold * 1.5));
 			await DisplayResults();
 		}
 
@@ -75,8 +79,8 @@ namespace Xamarin.Forms.Controls.Issues
 			var stats = _PerformanceProvider.Statistics.Where(stat => !stat.Value.IsDetail);
 			ViewModel.ActualRenderTime = stats.Select(q => q.Value).Sum(q => TimeSpan.FromTicks(q.TotalTime).TotalMilliseconds);
 
-			// perf should be within 10%
-			if (Math.Abs(ViewModel.ActualRenderTime - ViewModel.ExpectedRenderTime) > ViewModel.ExpectedRenderTime * 0.10)
+			// perf should be within threshold
+			if (Math.Abs(ViewModel.ActualRenderTime - ViewModel.ExpectedRenderTime) > ViewModel.ExpectedRenderTime * Threshold)
 				ViewModel.Outcome = Fail;
 			else
 				ViewModel.Outcome = Success;
@@ -112,8 +116,25 @@ namespace Xamarin.Forms.Controls.Issues
 			{
 				RunningApp.WaitForElement(q => q.Marked(Next));
 				RunningApp.Tap(q => q.Marked(Next));
-				RunningApp.WaitForElement(q => q.Marked(Success));
+
+				Assert.DoesNotThrow(() => RunningApp.WaitForElement(q => q.Marked(Success)), GetFailureMessage());
 			}
+		}
+
+		string GetFailureMessage()
+		{
+			double expected = 0;
+			double.TryParse(GetText(PerformanceTrackerTemplate.ExpectedId), out expected);
+
+			var scenario = GetText(PerformanceTrackerTemplate.ScenarioId);
+			var actual = GetText(PerformanceTrackerTemplate.ActualId);
+
+			return $"Scenario \"{scenario}\" failed. Expected {expected * BottomThreshold}-{expected * TopThreshold}ms, Actual {actual}ms.";
+		}
+
+		string GetText(string id)
+		{
+			return RunningApp.Query(q => q.Marked(id))[0].Text;
 		}
 #endif
 	}

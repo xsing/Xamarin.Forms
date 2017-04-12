@@ -5,6 +5,11 @@ namespace Xamarin.Forms.Controls
 	[Preserve(AllMembers = true)]
 	internal class PerformanceTrackerTemplate : StackLayout
 	{
+		public const string ScenarioId = "ScenarioId";
+		public const string ExpectedId = "ExpectedId";
+		public const string ActualId = "ActualId";
+		public const string OutcomeId = "OutcomeId";
+
 		public PerformanceTrackerTemplate()
 		{
 			var scenarioLabel = new Label
@@ -12,7 +17,8 @@ namespace Xamarin.Forms.Controls
 				BackgroundColor = Color.Blue,
 				TextColor = Color.White,
 				HorizontalTextAlignment = TextAlignment.Center,
-				HeightRequest = 25
+				HeightRequest = 25,
+				AutomationId = ScenarioId
 			};
 			scenarioLabel.SetBinding(Label.TextProperty, new TemplateBinding(nameof(PerformanceTracker.Scenario)));
 			Children.Add(scenarioLabel);
@@ -23,7 +29,8 @@ namespace Xamarin.Forms.Controls
 				TextColor = Color.White,
 				HorizontalTextAlignment = TextAlignment.Center,
 				HorizontalOptions = LayoutOptions.FillAndExpand,
-				HeightRequest = 25
+				HeightRequest = 25,
+				AutomationId = ActualId
 			};
 			renderTimeLabel.SetBinding(Label.TextProperty, new TemplateBinding(nameof(PerformanceTracker.RenderTime)));
 
@@ -33,7 +40,8 @@ namespace Xamarin.Forms.Controls
 				TextColor = Color.White,
 				HorizontalTextAlignment = TextAlignment.Center,
 				HorizontalOptions = LayoutOptions.FillAndExpand,
-				HeightRequest = 25
+				HeightRequest = 25,
+				AutomationId = ExpectedId
 			};
 			expectedLabel.SetBinding(Label.TextProperty, new TemplateBinding(nameof(PerformanceTracker.ExpectedRenderTime)));
 
@@ -43,7 +51,8 @@ namespace Xamarin.Forms.Controls
 				TextColor = Color.White,
 				HorizontalTextAlignment = TextAlignment.Center,
 				HorizontalOptions = LayoutOptions.FillAndExpand,
-				HeightRequest = 25
+				HeightRequest = 25,
+				AutomationId = OutcomeId
 			};
 			outcomeLabel.SetBinding(Label.TextProperty, new TemplateBinding(nameof(PerformanceTracker.Outcome)));
 

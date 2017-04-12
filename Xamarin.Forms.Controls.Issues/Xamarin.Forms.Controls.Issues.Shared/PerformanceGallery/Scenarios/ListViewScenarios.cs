@@ -8,7 +8,7 @@ namespace Xamarin.Forms.Controls.GalleryPages.PerformanceGallery.Scenarios
 	internal class ListViewScenario1 : PerformanceScenario
 	{
 		public ListViewScenario1()
-			: base("ListView with 1k ViewCells", 750)
+			: base("ListView with 1k ViewCells", 500)
 		{
 			View = new ListView
 			{
@@ -22,7 +22,7 @@ namespace Xamarin.Forms.Controls.GalleryPages.PerformanceGallery.Scenarios
 	internal class ListViewScenario2 : PerformanceScenario
 	{
 		public ListViewScenario2()
-			: base("ListView with 1k ViewCells & DTS", 750)
+			: base("ListView with 1k ViewCells & DTS", 400)
 		{
 			View = new ListView
 			{
