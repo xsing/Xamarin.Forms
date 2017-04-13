@@ -112,13 +112,27 @@ namespace Xamarin.Forms.Controls.Issues
 		{
 			var testCasesCount = FindPerformanceScenarios().Count();
 
+			List<string> warnings = new List<string>();
+
 			for (int i = 0; i < testCasesCount; i++)
 			{
 				RunningApp.WaitForElement(q => q.Marked(Next));
 				RunningApp.Tap(q => q.Marked(Next));
 
-				Assert.DoesNotThrow(() => RunningApp.WaitForElement(q => q.Marked(Success)), GetFailureMessage());
+				try
+				{
+					RunningApp.WaitForElement(q => q.Marked(Success));
+				}
+				catch (Exception)
+				{
+					var message = GetFailureMessage();
+					if (!warnings.Contains(message))
+						warnings.Add(message);
+				}
 			}
+
+			if (warnings.Any())
+				Assert.Inconclusive($"Performance threshold exceeded.\r\n{string.Join("\r\n", warnings)}");
 		}
 
 		string GetFailureMessage()
@@ -129,7 +143,7 @@ namespace Xamarin.Forms.Controls.Issues
 			var scenario = GetText(PerformanceTrackerTemplate.ScenarioId);
 			var actual = GetText(PerformanceTrackerTemplate.ActualId);
 
-			return $"Scenario \"{scenario}\" failed. Expected {expected * BottomThreshold}-{expected * TopThreshold}ms, Actual {actual}ms.";
+			return $" - Scenario \"{scenario}\" failed. Expected {expected * BottomThreshold}-{expected * TopThreshold}ms, Actual {actual}ms.";
 		}
 
 		string GetText(string id)
