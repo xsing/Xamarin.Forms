@@ -54,13 +54,24 @@ namespace Xamarin.Forms.Platform.Android
 		Page _navigationPageCurrentPage;
 		NavigationModel _navModel = new NavigationModel();
 
-		internal Platform(Context context)
+		bool _embedded = true;
+
+		internal Platform(Context context, bool embedded = false)
 		{
+			_embedded = embedded;
 			_context = context;
 
-			_defaultActionBarTitleTextColor = SetDefaultActionBarTitleTextColor();
-
+			if (!embedded)
+			{
+				_defaultActionBarTitleTextColor = SetDefaultActionBarTitleTextColor();
+			}
+			
 			_renderer = new PlatformRenderer(context, this);
+
+			if (embedded)
+			{
+				return;
+			}
 
 			FormsApplicationActivity.BackPressed += HandleBackPressed;
 
@@ -299,6 +310,11 @@ namespace Xamarin.Forms.Platform.Android
 
 		public void UpdateActionBarTextColor()
 		{
+			if (_embedded)
+			{
+				return;
+			}
+
 			SetActionBarTextColor();
 			UpdateActionBarUpImageColor();
 		}
