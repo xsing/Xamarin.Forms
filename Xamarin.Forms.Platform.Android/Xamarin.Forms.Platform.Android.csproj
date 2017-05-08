@@ -105,6 +105,9 @@
     <Compile Include="ButtonBackgroundTracker.cs" />
     <Compile Include="Extensions\JavaObjectExtensions.cs" />
     <Compile Include="FastRenderers\AutomationPropertiesProvider.cs" />
+    <Compile Include="AppCompat\PageExtensions.cs" />
+    <Compile Include="Extensions\JavaObjectExtensions.cs" />
+    <Compile Include="FastRenderers\AccessibilityProvider.cs" />
     <Compile Include="FastRenderers\ButtonRenderer.cs" />
     <Compile Include="AppCompat\FormsViewPager.cs" />
     <Compile Include="AppCompat\FragmentContainer.cs" />
