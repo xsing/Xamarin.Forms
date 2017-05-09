@@ -87,6 +87,11 @@ namespace Xamarin.Forms.Platform.WinRT
 			Application.Current.NavigationProxy.Inner = this;
 		}
 
+		internal void SetPlatformDisconnected(VisualElement visualElement)
+		{
+			visualElement.Platform = this;
+		}
+
 		public IReadOnlyList<Page> NavigationStack
 		{
 			get { return _navModel.Tree.Last(); }

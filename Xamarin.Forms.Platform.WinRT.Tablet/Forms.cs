@@ -5,8 +5,10 @@ using System.Linq;
 using System.Reflection;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation.Metadata;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Xamarin.Forms.Internals;
 #if WINDOWS_UWP
@@ -24,7 +26,9 @@ namespace Xamarin.Forms
 		const string LogFormat = "[{0}] {1}";
 
 		static ApplicationExecutionState s_state;
-		static bool s_isInitialized;
+
+		public static bool IsInitialized { get; private set; }
+
 #if WINDOWS_UWP
 
 		
@@ -33,7 +37,7 @@ namespace Xamarin.Forms
 		public static void Init(IActivatedEventArgs launchActivatedEventArgs)
 #endif
 		{
-			if (s_isInitialized)
+			if (IsInitialized)
 				return;
 
 			var accent = (SolidColorBrush)Windows.UI.Xaml.Application.Current.Resources["SystemColorControlAccentBrush"];
@@ -69,7 +73,7 @@ namespace Xamarin.Forms
 
 			Registrar.RegisterAll(new[] { typeof(ExportRendererAttribute), typeof(ExportCellAttribute), typeof(ExportImageSourceHandlerAttribute) });
 
-			s_isInitialized = true;
+			IsInitialized = true;
 			s_state = launchActivatedEventArgs.PreviousExecutionState;
 
 #if WINDOWS_UWP
@@ -117,5 +121,27 @@ namespace Xamarin.Forms
 			e.Handled = platform.BackButtonPressed();
 		}
 #endif
+	}
+
+	public static class PageExtensions
+	{
+		public static FrameworkElement CreateFrameworkElement(this VisualElement view)
+		{
+			if (!Forms.IsInitialized)
+				throw new InvalidOperationException("call Forms.Init() before this");
+
+			var root = new Windows.UI.Xaml.Controls.Page();
+
+			new WindowsPlatform(root).SetPlatformDisconnected(view);
+
+			var frameworkElement = view.GetOrCreateRenderer() as FrameworkElement;
+
+			frameworkElement.Loaded += (sender, args) =>
+			{
+				view.Layout(new Rectangle(0, 0, frameworkElement.ActualWidth, frameworkElement.ActualHeight));
+			};
+			
+			return frameworkElement;
+		}
 	}
 }
