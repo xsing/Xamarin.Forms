@@ -352,6 +352,11 @@ namespace Xamarin.Forms.Platform.Android
 
 		internal void PrepareMenu(IMenu menu)
 		{
+			if (_embedded)
+			{
+				return;
+			}
+
 			foreach (ToolbarItem item in _toolbarTracker.ToolbarItems)
 				item.PropertyChanged -= HandleToolbarItemPropertyChanged;
 			menu.Clear();
@@ -455,7 +460,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		internal void UpdateActionBar()
 		{
-			if (ActionBar == null) //Fullscreen theme doesn't have action bar
+			if (ActionBar == null || _embedded) //Fullscreen theme doesn't have action bar
 				return;
 
 			List<Page> relevantAncestors = AncestorPagesOfPage(_navModel.CurrentPage);
