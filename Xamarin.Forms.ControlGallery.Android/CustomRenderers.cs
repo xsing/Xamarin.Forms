@@ -16,6 +16,7 @@ using Android.Content;
 using Android.Runtime;
 using Android.Util;
 using AButton = Android.Widget.Button;
+using ATextView = Android.Widget.TextView;
 using AView = Android.Views.View;
 using Android.OS;
 using System.Reflection;
@@ -33,6 +34,8 @@ using Xamarin.Forms.Controls.Issues;
 [assembly: ExportRenderer(typeof(AndroidHelpText.HintLabel), typeof(HintLabel))]
 
 [assembly: ExportRenderer(typeof(Xamarin.Forms.Controls.Issues.NoFlashTestNavigationPage), typeof(Xamarin.Forms.ControlGallery.Android.NoFlashTestNavigationPage))]
+
+[assembly: ExportRenderer(typeof(Bugzilla47430.Bugzilla47430Button), typeof(Bugzilla47430ButtonRenderer))]
 
 #if PRE_APPLICATION_CLASS
 #elif FORMS_APPLICATION_ACTIVITY
@@ -524,6 +527,7 @@ namespace Xamarin.Forms.ControlGallery.Android
 	}
 
 
+
 	public class HintLabel : Xamarin.Forms.Platform.Android.FastRenderers.LabelRenderer
 	{
 		public HintLabel()
@@ -537,6 +541,31 @@ namespace Xamarin.Forms.ControlGallery.Android
 		protected override void SetupPageTransition(global::Android.Support.V4.App.FragmentTransaction transaction, bool isPush)
 		{
 			transaction.SetTransition((int)FragmentTransit.None);
+		}
+	}
+
+	public class Bugzilla47430ButtonRenderer : Xamarin.Forms.Platform.Android.AppCompat.ButtonRenderer
+	{
+		protected override void OnElementChanged(ElementChangedEventArgs<Button> e)
+		{
+			base.OnElementChanged(e);
+
+			if (Control == null || Element == null)
+			{
+				return;
+			}
+
+			var formsControl = Element as Bugzilla47430.Bugzilla47430Button;
+
+			if (formsControl.FormattedText != null)
+			{
+				var textView = new ATextView(Control.Context);
+				var spannableString = formsControl.FormattedText.ToAttributed(Font.Default, Color.White, textView);
+				Control.TextFormatted = spannableString;
+
+				// There is a bug in AppCompat where the default all caps text ignores spans
+				Control.SetAllCaps(false);
+			}
 		}
 	}
 }
