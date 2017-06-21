@@ -1,7 +1,6 @@
 ﻿using Xamarin.Forms.CustomAttributes;
 using Xamarin.Forms.Internals;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.ComponentModel;
 
@@ -13,9 +12,16 @@ using NUnit.Framework;
 namespace Xamarin.Forms.Controls.Issues
 {
 	[Preserve(AllMembers = true)]
-	[Issue(IssueTracker.Bugzilla, 9944886, "UWP Listview ItemSelected event triggered twice for each selection", PlatformAffected.UWP)]
+	[Issue(IssueTracker.Bugzilla, 44886, "UWP Listview ItemSelected event triggered twice for each selection", PlatformAffected.UWP)]
 	public class Bugzilla44886 : TestContentPage
 	{
+		const string Item1 = "Item 1";
+		const string Instructions = "Select one of the items in the list. The text in blue should show 1, indicating that the ItemSelected event fired once. If it shows 2, this test has failed. Be sure to also test Keyboard selection and Narrator selection. On UWP, the ItemSelected event should fire when an item is highlighted and _not_ when it is un-highlighted (by pressing spacebar).";
+		const string CountId = "countId";
+
+		Label _CountLabel = new Label { AutomationId = CountId, TextColor = Color.Blue };
+		MyViewModel _vm = new MyViewModel();
+
 		[Preserve(AllMembers = true)]
 		class MyViewModel : INotifyPropertyChanged
 		{
@@ -47,11 +53,6 @@ namespace Xamarin.Forms.Controls.Issues
 			#endregion
 		}
 
-		const string Instructions = "Select one of the items in the list. The text in blue should show 1, indicating that the ItemSelected event fired once. If it shows 2, this test has failed. Be sure to also test Keyboard selection and Narrator selection.";
-		const string CountId = "countId";
-		Label _CountLabel = new Label { AutomationId = CountId, TextColor = Color.Blue };
-		MyViewModel _vm = new MyViewModel();
-
 		protected override void Init()
 		{
 			BindingContext = _vm;
@@ -60,7 +61,7 @@ namespace Xamarin.Forms.Controls.Issues
 
 				var listView = new ListView
 			{
-				ItemsSource = new List<string> { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" }
+				ItemsSource = new List<string> { Item1, "Item 2", "Item 3", "Item 4", "Item 5" }
 			};
 			listView.ItemSelected += ListView_ItemSelected;
 
@@ -77,8 +78,7 @@ namespace Xamarin.Forms.Controls.Issues
 		[Test]
 		public void Bugzilla44886Test()
 		{
-			RunningApp.Screenshot("I am at Issue 1");
-			RunningApp.WaitForElement(q => q.Marked("Item 1"));
+			RunningApp.WaitForElement(q => q.Marked(Item1));
 
 			int count = int.Parse(RunningApp.Query(q => q.Marked(CountId))[0].Text);
 
