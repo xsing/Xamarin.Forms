@@ -526,8 +526,11 @@ namespace Xamarin.Forms.Platform.WinRT
 #endif
 
 			// A11y: Tapped event will not be routed when Narrator is active
-			// Also handles keyboard selection
-			SelectElementItem();
+			// Also handles keyboard selection. 
+			// Default UWP behavior is that items are selected when you navigate to them via the arrow keys
+			// and unselected with the space bar, so this will remain the same.
+			if (List.SelectedItem != null && Element.SelectedItem != List.SelectedItem)
+				OnListItemClicked(List.SelectedIndex);
 		}
 
 		FrameworkElement FindElement(object cell)
@@ -539,15 +542,6 @@ namespace Xamarin.Forms.Platform.WinRT
 			}
 
 			return null;
-		}
-
-		void SelectElementItem()
-		{
-			if (List.SelectedItem != null && Element.SelectedItem != List.SelectedItem)
-			{
-				((IElementController)Element).SetValueFromRenderer(ListView.SelectedItemProperty, List?.SelectedItem);
-				OnElementItemSelected(null, new SelectedItemChangedEventArgs(Element?.SelectedItem));
-			}
 		}
 
 #if WINDOWS_UWP
