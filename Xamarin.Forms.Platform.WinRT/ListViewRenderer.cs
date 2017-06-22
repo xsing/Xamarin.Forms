@@ -62,7 +62,8 @@ namespace Xamarin.Forms.Platform.WinRT
 
 				if (List == null)
 				{
-					List = new WListView {
+					List = new WListView
+					{
 						IsSynchronizedWithCurrentItem = false,
 						ItemTemplate = (Windows.UI.Xaml.DataTemplate)WApp.Current.Resources["CellTemplate"],
 						HeaderTemplate = (Windows.UI.Xaml.DataTemplate)WApp.Current.Resources["View"],
@@ -465,10 +466,10 @@ namespace Xamarin.Forms.Platform.WinRT
 		void OnListItemClicked(int index)
 		{
 #if !WINDOWS_UWP
-	// If we're on the phone , we need to cache the selected item in case the handler 
-	// we're about to call changes any item indexes;
-	// in some cases, those index changes will throw an exception we can't catch if 
-	// the listview has an item selected
+			// If we're on the phone , we need to cache the selected item in case the handler 
+			// we're about to call changes any item indexes;
+			// in some cases, those index changes will throw an exception we can't catch if 
+			// the listview has an item selected
 			object selectedItem = null;
 			if (Device.Idiom == TargetIdiom.Phone)
 			{
@@ -508,7 +509,15 @@ namespace Xamarin.Forms.Platform.WinRT
 			RestorePreviousSelectedVisual();
 
 			if (e.AddedItems.Count == 0)
+			{
+				// Deselecting an item is a valid SelectedItem change.
+				if (Element.SelectedItem != List.SelectedItem)
+				{
+					OnListItemClicked(List.SelectedIndex);
+				}
+
 				return;
+			}
 
 			object cell = e.AddedItems[0];
 			if (cell == null)
@@ -525,11 +534,11 @@ namespace Xamarin.Forms.Platform.WinRT
 			}
 #endif
 
-			// A11y: Tapped event will not be routed when Narrator is active
+			// A11y: Tapped event will not be routed when Narrator is active, so we need to handle it here.
 			// Also handles keyboard selection. 
 			// Default UWP behavior is that items are selected when you navigate to them via the arrow keys
-			// and unselected with the space bar, so this will remain the same.
-			if (List.SelectedItem != null && Element.SelectedItem != List.SelectedItem)
+			// and deselected with the space bar, so this will remain the same.
+			if (Element.SelectedItem != List.SelectedItem)
 				OnListItemClicked(List.SelectedIndex);
 		}
 
