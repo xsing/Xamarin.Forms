@@ -16,7 +16,7 @@ namespace Xamarin.Forms.Controls.Issues
 	public class Bugzilla44886 : TestContentPage
 	{
 		const string Item1 = "Item 1";
-		const string Instructions = "Select one of the items in the list. The text in blue should show 1, indicating that the ItemSelected event fired once. If it shows 2, this test has failed. Be sure to also test Keyboard selection and Narrator selection. On UWP, the ItemSelected event should fire when an item is highlighted and _not_ when it is un-highlighted (by pressing spacebar).";
+		const string Instructions = "Select one of the items in the list. The text in blue should show 1, indicating that the ItemSelected event fired once. If it shows 2, this test has failed. Be sure to also test Keyboard selection and Narrator selection. On UWP, the ItemSelected event should fire when an item is highlighted and again when it is un-highlighted (by pressing spacebar).";
 		const string CountId = "countId";
 
 		Label _CountLabel = new Label { AutomationId = CountId, TextColor = Color.Blue };
