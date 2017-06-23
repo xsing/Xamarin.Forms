@@ -79,6 +79,7 @@ namespace Xamarin.Forms.Controls.Issues
 		public void Bugzilla44886Test()
 		{
 			RunningApp.WaitForElement(q => q.Marked(Item1));
+			RunningApp.Tap(q => q.Marked(Item1));
 
 			int count = int.Parse(RunningApp.Query(q => q.Marked(CountId))[0].Text);
 
