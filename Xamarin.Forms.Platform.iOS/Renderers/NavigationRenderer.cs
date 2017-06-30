@@ -319,7 +319,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		protected virtual async Task<bool> OnPushAsync(Page page, bool animated)
 		{
-			if(page is MasterDetailPage)
+			if (page is MasterDetailPage)
 				System.Diagnostics.Trace.WriteLine($"Pushing a {nameof(MasterDetailPage)} onto a {nameof(NavigationPage)} is not a supported UI pattern on iOS. " +
 					"Please see https://developer.apple.com/documentation/uikit/uisplitviewcontroller for more details.");
 
@@ -354,7 +354,7 @@ namespace Xamarin.Forms.Platform.iOS
 			{
 				try
 				{
-					setTitleImage(pack,titleIcon);
+					SetTitleImage(pack, titleIcon);
 				}
 				catch
 				{
@@ -376,7 +376,7 @@ namespace Xamarin.Forms.Platform.iOS
 			return pack;
 		}
 
-		async void setTitleImage(ParentingViewController pack, FileImageSource titleIcon)
+		async void SetTitleImage(ParentingViewController pack, FileImageSource titleIcon)
 		{
 			var source = Internals.Registrar.Registered.GetHandler<IImageSourceHandler>(titleIcon.GetType());
 			var image = await source.LoadImageAsync(titleIcon);
@@ -623,7 +623,7 @@ namespace Xamarin.Forms.Platform.iOS
 			if (containerController == null)
 				return;
 			var currentChild = containerController.Child;
-			var firstPage = ((NavigationPage)Element).Pages.FirstOrDefault(); 
+			var firstPage = ((NavigationPage)Element).Pages.FirstOrDefault();
 			if ((firstPage != pageBeingRemoved && currentChild != firstPage && NavigationPage.GetHasBackButton(currentChild)) || _parentMasterDetailPage == null)
 				return;
 
