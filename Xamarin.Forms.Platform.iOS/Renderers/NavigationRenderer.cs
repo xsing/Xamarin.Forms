@@ -535,24 +535,16 @@ namespace Xamarin.Forms.Platform.iOS
 			// Gesture in progress, lets not be proactive and just wait for it to finish
 			var count = ViewControllers.Length;
 			var task = GetAppearedOrDisappearedTask(controller.Child);
-			task.ContinueWith(async t =>
+
+			task.ContinueWith(t =>
 			{
 				// task returns true if the user lets go of the page and is not popped
 				// however at this point the renderer is already off the visual stack so we just need to update the NavigationPage
 				// Also worth noting this task returns on the main thread
 				if (t.Result)
 					return;
-				_ignorePopCall = true;
-				// because iOS will just chain multiple animations together...
-				var removed = count - ViewControllers.Length;
-				for (var i = 0; i < removed; i++)
-				{
-					// lets just pop these suckers off, do not await, the true is there to make this fast
-					await ((NavigationPage)Element).PopAsyncInner(animated, true);
-				}
 				// because we skip the normal pop process we need to dispose ourselves
 				controller.Dispose();
-				_ignorePopCall = false;
 			}, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
@@ -657,6 +649,19 @@ namespace Xamarin.Forms.Platform.iOS
 			{
 				_secondaryToolbar.Hidden = true;
 				//secondaryToolbar.Items = null;
+			}
+		}
+
+		internal async Task UpdateFormsInnerNavigation(Page pageBeingRemoved)
+		{
+			var navPage = Element as NavigationPage;
+			if (navPage != null)
+			{
+				_ignorePopCall = true;
+				var lastIntheStack = Element.Navigation.NavigationStack.LastOrDefault();
+				if (lastIntheStack == pageBeingRemoved)
+					await navPage.PopAsyncInner(false, true);
+				_ignorePopCall = false;
 			}
 		}
 
@@ -978,7 +983,7 @@ namespace Xamarin.Forms.Platform.iOS
 			{
 				IVisualElementRenderer childRenderer;
 				if (Child != null && (childRenderer = Platform.GetRenderer(Child)) != null)
-					return childRenderer.ViewController.ShouldAutorotate();				
+					return childRenderer.ViewController.ShouldAutorotate();
 				return base.ShouldAutorotate();
 			}
 
@@ -991,13 +996,25 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 
 			public override bool ShouldAutomaticallyForwardRotationMethods => true;
+
+			public override async void DidMoveToParentViewController(UIViewController parent)
+			{
+				//we are being removed from the UINavigationPage
+				if (parent == null)
+				{
+					NavigationRenderer n;
+					if (_navigation.TryGetTarget(out n))
+						await n.UpdateFormsInnerNavigation(Child);
+				}
+				base.DidMoveToParentViewController(parent);
+			}
 		}
 
 		public override UIViewController ChildViewControllerForStatusBarHidden()
 		{
 			return (UIViewController)Platform.GetRenderer(Current);
 		}
-		
+
 		void IEffectControlProvider.RegisterEffect(Effect effect)
 		{
 			VisualElementRenderer<VisualElement>.RegisterEffect(effect, View);
