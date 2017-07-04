@@ -251,6 +251,17 @@ namespace Xamarin.Forms
 
 			var page = (Page)InternalChildren.Last();
 
+			return await RemoveAsyncInner(page, animated, fast);
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public async Task<Page> RemoveAsyncInner(Page page, bool animated, bool fast)
+		{
+			if (StackDepth == 1)
+			{
+				return null;
+			}
+
 			var args = new NavigationRequestedEventArgs(page, animated);
 
 			var removed = true;
