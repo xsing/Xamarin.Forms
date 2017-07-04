@@ -30,6 +30,9 @@ using Xamarin.Forms.Controls.Issues;
 
 [assembly: ExportRenderer(typeof(Bugzilla42000._42000NumericEntryNoDecimal), typeof(EntryRendererNoDecimal))]
 [assembly: ExportRenderer(typeof(Bugzilla42000._42000NumericEntryNoNegative), typeof(EntryRendererNoNegative))]
+[assembly: ExportRenderer(typeof(AndroidHelpText.HintLabel), typeof(HintLabel))]
+
+[assembly: ExportRenderer(typeof(Xamarin.Forms.Controls.Issues.NoFlashTestNavigationPage), typeof(Xamarin.Forms.ControlGallery.Android.NoFlashTestNavigationPage))]
 
 #if PRE_APPLICATION_CLASS
 #elif FORMS_APPLICATION_ACTIVITY
@@ -234,9 +237,10 @@ namespace Xamarin.Forms.ControlGallery.Android
 			{// no view to re-use, create new
 				view = (context as Activity).LayoutInflater.Inflate(Resource.Layout.NativeAndroidCell, null);
 			}
-			else { // re-use, clear image
-				   // doesn't seem to help
-				   //view.FindViewById<ImageView> (Resource.Id.Image).Drawable.Dispose ();
+			else
+			{ // re-use, clear image
+			  // doesn't seem to help
+			  //view.FindViewById<ImageView> (Resource.Id.Image).Drawable.Dispose ();
 			}
 
 			view.FindViewById<TextView>(Resource.Id.Text1).Text = x.Name;
@@ -273,7 +277,8 @@ namespace Xamarin.Forms.ControlGallery.Android
 				}, TaskScheduler.FromCurrentSynchronizationContext());
 
 			}
-			else {
+			else
+			{
 				// clear the image
 				view.FindViewById<ImageView>(Resource.Id.Image).SetImageBitmap(null);
 			}
@@ -388,9 +393,10 @@ namespace Xamarin.Forms.ControlGallery.Android
 			{// no view to re-use, create new
 				view = _context.LayoutInflater.Inflate(Resource.Layout.NativeAndroidListViewCell, null);
 			}
-			else { // re-use, clear image
-				   // doesn't seem to help
-				   //view.FindViewById<ImageView> (Resource.Id.Image).Drawable.Dispose ();
+			else
+			{ // re-use, clear image
+			  // doesn't seem to help
+			  //view.FindViewById<ImageView> (Resource.Id.Image).Drawable.Dispose ();
 			}
 			view.FindViewById<TextView>(Resource.Id.Text1).Text = item.Name;
 			view.FindViewById<TextView>(Resource.Id.Text2).Text = item.Category;
@@ -425,7 +431,8 @@ namespace Xamarin.Forms.ControlGallery.Android
 					}
 				}, TaskScheduler.FromCurrentSynchronizationContext());
 			}
-			else {
+			else
+			{
 				// clear the image
 				view.FindViewById<ImageView>(Resource.Id.Image).SetImageBitmap(null);
 			}
@@ -513,6 +520,23 @@ namespace Xamarin.Forms.ControlGallery.Android
 			inputTypes &= ~InputTypes.NumberFlagDecimal;
 
 			return base.GetDigitsKeyListener(inputTypes);
+		}
+	}
+
+
+	public class HintLabel : Xamarin.Forms.Platform.Android.FastRenderers.LabelRenderer
+	{
+		public HintLabel()
+		{
+			Hint = AndroidHelpText.HintLabel.Success;
+		}
+  }
+
+	public class NoFlashTestNavigationPage : Xamarin.Forms.Platform.Android.AppCompat.NavigationPageRenderer
+	{
+		protected override void SetupPageTransition(global::Android.Support.V4.App.FragmentTransaction transaction, bool isPush)
+		{
+			transaction.SetTransition((int)FragmentTransit.None);
 		}
 	}
 }
