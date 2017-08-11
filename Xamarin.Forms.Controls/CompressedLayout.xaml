@@ -8,7 +8,7 @@
 		<StackLayout Padding="6" CompressedLayout.IsHeadless="true">
 			<Label Text="Second"/>
 			<ContentView Padding="6" CompressedLayout.IsHeadless="true">
-				<Label Text="Third"/>
+				<Label x:Name="this" Text="{Binding X, Source={x:Reference this}, StringFormat='Label.X:{0}'}"/>
 			</ContentView>
 			<Label Text="Fourth"/>
 		</StackLayout>

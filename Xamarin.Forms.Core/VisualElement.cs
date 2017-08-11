@@ -289,7 +289,9 @@ namespace Xamarin.Forms
 		public double X
 		{
 			get { return _mockX == -1 ? (double)GetValue(XProperty) : _mockX; }
-			private set { SetValue(XPropertyKey, value); }
+			private set {
+				SetValue(XPropertyKey, value);
+			}
 		}
 
 		public double Y
