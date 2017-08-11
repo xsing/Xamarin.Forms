@@ -27,10 +27,12 @@ namespace Xamarin.Forms.Controls.Issues
 	)]
 	public class Bugzilla52487 : TestContentPage
 	{
-		const int FontSize = 12;
+		const int CountFontSize = 12;
+		const int CellFontSize = 14;
 		const int MinScrollDelta = 2;
 		const int ItemsCount = 1000;
 		const int DefaultItemHeight = 300;
+		const int MinimumItemHeight = 40;
 
 		static Tuple<int, int, int> Mix = new Tuple<int, int, int>(255, 255, 100);
 		static IEnumerable<Color> ColorGenerator()
@@ -146,6 +148,7 @@ namespace Xamarin.Forms.Controls.Issues
 						BackgroundColor = GetColor(),
 						VerticalTextAlignment = TextAlignment.Center,
 						HorizontalTextAlignment = TextAlignment.Center,
+						FontSize = CellFontSize
 					};
 
 					_label.SetBinding(HeightRequestProperty, nameof(Item.Value));
@@ -185,14 +188,12 @@ namespace Xamarin.Forms.Controls.Issues
 			[Preserve(AllMembers = true)]
 			class Item : INotifyPropertyChanged
 			{
-				internal static int s_height = DefaultItemHeight;
-
 				int _id;
 				int _height;
 
-				internal Item(int id)
+				internal Item(int id, int height)
 				{
-					_height = s_height / (id % 2 + 1);
+					_height = height / (id % 2 + 1);
 					_id = id;
 					Interlocked.Increment(ref __counter.ItemAlloc);
 				}
@@ -223,18 +224,36 @@ namespace Xamarin.Forms.Controls.Issues
 			}
 
 			[Preserve(AllMembers = true)]
-			class ItemSpy : IReadOnlyList<Item>
+			class ItemActivator : IReadOnlyList<Item>
 			{
 				int _count;
+				int _height = DefaultItemHeight;
 				List<WeakReference<Item>> _items;
 
-				internal ItemSpy(int count)
+				internal ItemActivator(int count)
 				{
 					_count = count;
 					_items = new List<WeakReference<Item>>(
 						Enumerable.Range(0, count)
 						.Select(o => new WeakReference<Item>(null))
 					);
+				}
+
+				public void UpdateHeights(double multipule)
+				{
+					if (multipule < 1 && _height < MinimumItemHeight)
+						return;
+
+					_height = (int)(_height * multipule);
+
+					foreach (var weakItem in _items)
+					{
+						Item item;
+						if (!(weakItem.TryGetTarget(out item)))
+							continue;
+
+						item.Value = _height;
+					}
 				}
 
 				public Item this[int index]
@@ -250,7 +269,7 @@ namespace Xamarin.Forms.Controls.Issues
 						{
 							_items[index] = 
 								new WeakReference<Item>(
-									item = new Item(index));
+									item = new Item(index, _height));
 						}
 
 						return item;
@@ -274,7 +293,7 @@ namespace Xamarin.Forms.Controls.Issues
 			class Counter : StackLayout
 			{
 				static Label CreateLabel()
-					=> new Label() { FontSize = FontSize };
+					=> new Label() { FontSize = CountFontSize };
 
 				internal void Update()
 				{
@@ -292,6 +311,8 @@ namespace Xamarin.Forms.Controls.Issues
 						= $"Bind={CellBind}";
 					ItemAliveLabel.Text
 						= $"VM={ItemAlloc - ItemFree}";
+					SelectLabel.Text
+						= $"Ask={OnSelectTemplate}";
 				}
 
 				internal int CellAlloc;
@@ -311,6 +332,7 @@ namespace Xamarin.Forms.Controls.Issues
 				Label CellBindsLabel = CreateLabel();
 				Label ItemMaxIndexLabel = CreateLabel();
 				Label ItemAliveLabel = CreateLabel();
+				Label SelectLabel = CreateLabel();
 
 				internal Counter()
 				{
@@ -319,6 +341,7 @@ namespace Xamarin.Forms.Controls.Issues
 					Children.Add(CellBindsLabel);
 					Children.Add(ItemMaxIndexLabel);
 					Children.Add(ItemAliveLabel);
+					Children.Add(SelectLabel);
 					Update();
 				}
 
@@ -344,13 +367,13 @@ namespace Xamarin.Forms.Controls.Issues
 			int _disappeared;
 			ListView _listView;
 			Item[] _items;
-			ItemSpy _itemSpy;
+			ItemActivator _itemActivator;
 
 			public ListViewSpy(
 				ListViewCachingStrategy cachingStrategy = ListViewCachingStrategy.RetainElement,
 				bool hasUnevenRows = false)
 			{
-				_itemSpy = new ItemSpy(ItemsCount);
+				_itemActivator = new ItemActivator(ItemsCount);
 
 				var dataTemplate = new DataTemplate(typeof(CellSpy));
 				if (cachingStrategy != ListViewCachingStrategy.RetainElement)
@@ -361,7 +384,7 @@ namespace Xamarin.Forms.Controls.Issues
 					HasUnevenRows = hasUnevenRows,
 					// see https://github.com/xamarin/Xamarin.Forms/pull/994/files
 					//RowHeight = 50,
-					ItemsSource = _itemSpy,
+					ItemsSource = _itemActivator,
 					ItemTemplate = dataTemplate
 				};
 				_listView.ItemAppearing += (o, e)
@@ -377,10 +400,10 @@ namespace Xamarin.Forms.Controls.Issues
 			{
 				var target = Math.Max(_appeared, _disappeared);
 				target += Math.Abs(_appeared - _disappeared) + MinScrollDelta;
-				if (target >= _itemSpy.Count)
-					target = _itemSpy.Count - 1;
+				if (target >= _itemActivator.Count)
+					target = _itemActivator.Count - 1;
 
-				_listView.ScrollTo(_itemSpy[target], ScrollToPosition.MakeVisible, animated: true);
+				_listView.ScrollTo(_itemActivator[target], ScrollToPosition.MakeVisible, animated: true);
 			}
 			internal override void Up()
 			{
@@ -389,15 +412,10 @@ namespace Xamarin.Forms.Controls.Issues
 				if (target < 0)
 					target = 0;
 
-				_listView.ScrollTo(_itemSpy[target], ScrollToPosition.MakeVisible, animated: true);
+				_listView.ScrollTo(_itemActivator[target], ScrollToPosition.MakeVisible, animated: true);
 			}
 			internal override void UpdateHeights(double multipule)
-			{
-				if (multipule < 0 && Item.s_height < 40)
-					return;
-
-				Item.s_height = (int)(Item.s_height * multipule);
-			}
+				=> _itemActivator.UpdateHeights(multipule);
 		}
 
 		[Preserve(AllMembers = true)]
@@ -418,6 +436,7 @@ namespace Xamarin.Forms.Controls.Issues
 			{
 				new Retain(),
 				new RecycleElement(),
+				new RecycleElementAndDataTemplate(),
 				new UnevenRecycleElement(),
 				new UnevenRecycleElementAndDataTemplate(),
 			};
