@@ -28,6 +28,25 @@ namespace Xamarin.Forms.Platform.Android
 			return new EmbeddedFragment(vg);
 		}
 
+		public static global::Android.Support.V4.App.Fragment CreateSupportFragment(this Page view, Context context)
+		{
+			if (!Forms.IsInitialized)
+				throw new InvalidOperationException("call Forms.Init() before this");
+
+			if (!(view.RealParent is Application))
+			{
+				Application app = new DefaultApplication();
+				app.MainPage = view;
+			}
+
+			var result = new Platform(context, true);
+			result.SetPage(view);
+
+			var vg = result.GetViewGroup();
+
+			return new EmbeddedSupportFragment(vg);
+		}
+
 		class DefaultApplication : Application
 		{
 		}
@@ -37,6 +56,21 @@ namespace Xamarin.Forms.Platform.Android
 			readonly ViewGroup _content;
 
 			public EmbeddedFragment(ViewGroup content)
+			{
+				_content = content;
+			}
+
+			public override global::Android.Views.View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+			{
+				return _content;
+			}
+		}
+
+		class EmbeddedSupportFragment : global::Android.Support.V4.App.Fragment
+		{
+			readonly ViewGroup _content;
+
+			public EmbeddedSupportFragment(ViewGroup content)
 			{
 				_content = content;
 			}
