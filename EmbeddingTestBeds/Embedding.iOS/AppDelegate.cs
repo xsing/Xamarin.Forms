@@ -7,8 +7,6 @@ using Xamarin.Forms.Platform.iOS;
 
 namespace Embedding.iOS
 {
-	// The UIApplicationDelegate for the application. This class is responsible for launching the
-	// User Interface of the application, as well as listening (and optionally responding) to application events from iOS.
 	[Register("AppDelegate")]
 	public class AppDelegate : UIApplicationDelegate
 	{
@@ -22,7 +20,7 @@ namespace Embedding.iOS
 		ViewController _mainController;
 
 		public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
-		{ 
+		{
 			Forms.Init();
 
 			Shared = this;
@@ -33,6 +31,7 @@ namespace Embedding.iOS
 				TextColor = UIColor.White
 			});
 
+			// TODO hartez 2017/08/15 14:15:18 This is giving me a null, take a look at WeatherApp and figure out what we're missing	
 			_mainController = Storyboard.InstantiateInitialViewController() as ViewController;
 			_navigation = new UINavigationController(_mainController);
 
@@ -75,7 +74,5 @@ namespace Embedding.iOS
 			// And push it onto the navigation stack
 			_navigation.PushViewController(_hello, true);
 		}
-
 	}
 }
-
