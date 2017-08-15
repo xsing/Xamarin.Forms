@@ -11,10 +11,10 @@ namespace Embedding.iOS
 			// Note: this .ctor should not contain any initialization logic.
 		}
 
-		public override void ViewDidLoad()
+		public override void ViewWillAppear(bool animated)
 		{
-			base.ViewDidLoad();
-			// Perform any additional setup after loading the view, typically from a nib.
+			base.ViewWillAppear(animated);
+			NavigationItem.RightBarButtonItem = AppDelegate.Shared.CreateHelloButton();
 		}
 
 		public override void DidReceiveMemoryWarning()

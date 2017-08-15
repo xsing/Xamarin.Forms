@@ -3,6 +3,7 @@ using Embedding.XF;
 using Foundation;
 using UIKit;
 using Xamarin.Forms;
+using Xamarin.Forms.Platform.iOS;
 
 namespace Embedding.iOS
 {
@@ -15,19 +16,13 @@ namespace Embedding.iOS
 		public static UIStoryboard Storyboard = UIStoryboard.FromName("Main", null);
 
 		UIWindow _window;
-		UIViewController _history;
+		UIViewController _hello;
 		UINavigationController _navigation;
-		UIBarButtonItem _aboutButton;
-		ViewController _weatherController;
-
-		public override UIWindow Window
-		{
-			get;
-			set;
-		}
+		UIBarButtonItem _helloButton;
+		ViewController _mainController;
 
 		public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
-		{
+		{ 
 			Forms.Init();
 
 			Shared = this;
@@ -38,8 +33,8 @@ namespace Embedding.iOS
 				TextColor = UIColor.White
 			});
 
-			_weatherController = Storyboard.InstantiateInitialViewController() as ViewController;
-			_navigation = new UINavigationController(_weatherController);
+			_mainController = Storyboard.InstantiateInitialViewController() as ViewController;
+			_navigation = new UINavigationController(_mainController);
 
 			// Listen for lookup requests from the history tracker
 			//MessagingCenter.Subscribe<History, string>(this, History.HistoryItemSelected, (history, postalCode) =>
@@ -54,29 +49,31 @@ namespace Embedding.iOS
 			return true;
 		}
 
-		public UIBarButtonItem CreateAboutButton()
+		public UIBarButtonItem CreateHelloButton()
 		{
-			if (_aboutButton == null)
+			if (_helloButton == null)
 			{
 				var btn = new UIButton(new CGRect(0, 0, 88, 44));
-				btn.SetTitle("History", UIControlState.Normal);
-				btn.TouchUpInside += (sender, e) => ShowAbout();
+				btn.SetTitle("Hello", UIControlState.Normal);
+				btn.SetTitleColor(UIColor.Blue, UIControlState.Normal);
+				btn.TouchUpInside += (sender, e) => ShowHello();
 
-				_aboutButton = new UIBarButtonItem(btn);
+				_helloButton = new UIBarButtonItem(btn);
 			}
-			return _aboutButton;
+
+			return _helloButton;
 		}
 
-		public void ShowAbout()
+		public void ShowHello()
 		{
 			// Create a XF History page as a view controller
-			if (_history == null)
+			if (_hello == null)
 			{
-				_history = new Hello().CreateViewController();
+				_hello = new Hello().CreateViewController();
 			}
 
 			// And push it onto the navigation stack
-			_navigation.PushViewController(_history, true);
+			_navigation.PushViewController(_hello, true);
 		}
 
 	}
