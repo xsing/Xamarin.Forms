@@ -18,12 +18,13 @@ namespace Embedding.Droid
 	[Activity(Label = "Embedding.Droid", MainLauncher = true, Icon = "@drawable/icon")]
 	public class MainActivity : FragmentActivity
 	{
-		bool _formsInitialized;
 		Fragment _hello;
 
 		protected override void OnCreate(Bundle bundle)
 		{
 			base.OnCreate(bundle);
+
+			Forms.Init(this, null);
 
 			// Set our view from the "main" layout resource
 			SetContentView (Resource.Layout.Main);
@@ -33,25 +34,13 @@ namespace Embedding.Droid
 			ft.Commit();
 		}
 
-		void EnsureFormsInitialized()
-		{
-			if (!_formsInitialized)
-			{
-				Forms.Init(this, null);
-				_formsInitialized = true;
-			}
-		}
-
 		public void ShowHello()
 		{
-			EnsureFormsInitialized();
-
 			// Create a XF History page as a fragment
 			if (_hello == null)
 			{
 				_hello = new Hello().CreateSupportFragment(this);
 			}
-
 
 			// And push that fragment onto the stack
 			FragmentTransaction ft = SupportFragmentManager.BeginTransaction();

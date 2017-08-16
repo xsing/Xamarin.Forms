@@ -122,26 +122,4 @@ namespace Xamarin.Forms
 		}
 #endif
 	}
-
-	public static class PageExtensions
-	{
-		public static FrameworkElement CreateFrameworkElement(this VisualElement view)
-		{
-			if (!Forms.IsInitialized)
-				throw new InvalidOperationException("call Forms.Init() before this");
-
-			var root = new Windows.UI.Xaml.Controls.Page();
-
-			new WindowsPlatform(root).SetPlatformDisconnected(view);
-
-			var frameworkElement = view.GetOrCreateRenderer() as FrameworkElement;
-
-			frameworkElement.Loaded += (sender, args) =>
-			{
-				view.Layout(new Rectangle(0, 0, frameworkElement.ActualWidth, frameworkElement.ActualHeight));
-			};
-
-			return frameworkElement;
-		}
-	}
 }
