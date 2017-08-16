@@ -7,16 +7,54 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-	    <Button HorizontalAlignment="Center" Content="Navigate To Standard UWP Page" Click="ButtonBase_OnClick"></Button>
-        <CommandBar>
-		    <AppBarButton Icon="List" Label="Hello">
-			    <AppBarButton.Flyout>
-				    <Flyout x:Name="Flyout">
-					    <Frame Height="400" Width="300" x:Name="HelloFlyout"></Frame>
-				    </Flyout>
-			    </AppBarButton.Flyout>
-		    </AppBarButton>
-	    </CommandBar>
+	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+
+		<CommandBar>
+			<AppBarButton Icon="List" Label="Hello">
+				<AppBarButton.Flyout>
+					<Flyout x:Name="Flyout">
+						<Frame Height="400" Width="300" x:Name="HelloFlyout" />
+					</Flyout>
+				</AppBarButton.Flyout>
+			</AppBarButton>
+		</CommandBar>
+
+		<StackPanel Grid.Row="1">
+			<TextBlock TextWrapping="WrapWholeWords">
+				Use the command bar button  to display a flyout containing a Forms Page.
+			</TextBlock>
+		</StackPanel>
+
+		<StackPanel Grid.Row="2" Padding="5">
+			<Button HorizontalAlignment="Center" Margin="5" 
+					Content="Navigate To UWP Page 2" Click="NavToUWPPage" />
+			<Button HorizontalAlignment="Center" Margin="5"
+					Content="Navigate To Forms Page 3" Click="NavToFormsPage3" />
+			<Button HorizontalAlignment="Center" Margin="5"
+					Content="Navigate To Forms Page 4" Click="NavToFormsPage4" />
+		</StackPanel>
+		
+		
 	</Grid>
+
 </Page>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

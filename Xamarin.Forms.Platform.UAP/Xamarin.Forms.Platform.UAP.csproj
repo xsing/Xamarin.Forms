@@ -476,7 +476,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="XFEmbeddedPage.xaml">
+    <Page Include="FormsEmbeddedPageWrapper.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

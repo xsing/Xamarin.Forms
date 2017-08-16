@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Xamarin.Forms.Platform.UWP.XFEmbeddedPage"
+    x:Class="Xamarin.Forms.Platform.UWP.FormsEmbeddedPageWrapper"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Xamarin.Forms.Platform.UAP"

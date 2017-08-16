@@ -41,6 +41,9 @@
     <Compile Include="Page3.xaml.cs">
       <DependentUpon>Page3.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Page4.xaml.cs">
+      <DependentUpon>Page4.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +71,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Page3.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Page4.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

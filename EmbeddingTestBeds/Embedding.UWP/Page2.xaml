@@ -8,7 +8,11 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		<TextBlock Text="Welcome to page 2"></TextBlock>
-	    <Button HorizontalAlignment="Center" Content="To Page 3 (Forms)" Click="Button_Click"></Button>
+		<Grid.RowDefinitions>
+			<RowDefinition></RowDefinition>
+			<RowDefinition></RowDefinition>
+		</Grid.RowDefinitions>
+		<TextBlock Text="Welcome to page 2" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+	    <Button Grid.Row="1" HorizontalAlignment="Center" Content="To Page 3 (Forms)" Click="Button_Click"></Button>
     </Grid>
 </Page>

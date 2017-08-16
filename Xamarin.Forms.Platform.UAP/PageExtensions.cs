@@ -1,21 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
 
 namespace Xamarin.Forms.Platform.UWP
 {
-	public partial class XFEmbeddedPage : Windows.UI.Xaml.Controls.Page
+	public sealed partial class FormsEmbeddedPageWrapper : Windows.UI.Xaml.Controls.Page
 	{
-		// TODO hartez 2017/08/16 14:24:21 Think about whether this should be concurrent	
-		internal static Dictionary<Guid, Xamarin.Forms.Page> Pages = new Dictionary<Guid, Page>();
+		internal static Dictionary<Guid, Page> Pages = new Dictionary<Guid, Page>();
 
-		public XFEmbeddedPage()
+		public FormsEmbeddedPageWrapper()
 		{
 			InitializeComponent();
 		}
@@ -24,12 +17,19 @@ namespace Xamarin.Forms.Platform.UWP
 		{
 			base.OnNavigatedTo(e);
 
-			var key = (Guid)e.Parameter;
+			if (e.Parameter == null)
+			{
+				throw new InvalidOperationException($"Cannot navigate to {nameof(FormsEmbeddedPageWrapper)} without " 
+					+ $"providing a {nameof(Xamarin.Forms.Page)} identifier.");
+			}
 
-			// TODO hartez 2017/08/16 14:23:17 Handle page not found	
-			var page = Pages[key];
-			Pages.Remove(key); // Otherwise the dictionary will hold on to this ref forever
-			var frameworkElement = page.CreateFrameworkElement();
+			// Find the page instance in the dictionary and then discard it so we don't prevent it from being collected
+			var key = (Guid)e.Parameter;
+			Page page = Pages[key];
+			Pages.Remove(key); 
+
+			// Convert that page into a FrameWorkElement we can display in the ContentPresenter
+			FrameworkElement frameworkElement = page.CreateFrameworkElement();
 
 			if (frameworkElement == null)
 			{
@@ -45,7 +45,9 @@ namespace Xamarin.Forms.Platform.UWP
 		public static FrameworkElement CreateFrameworkElement(this VisualElement visualElement)
 		{
 			if (!Forms.IsInitialized)
+			{
 				throw new InvalidOperationException("call Forms.Init() before this");
+			}
 
 			var root = new Windows.UI.Xaml.Controls.Page();
 
@@ -66,11 +68,16 @@ namespace Xamarin.Forms.Platform.UWP
 			return frameworkElement;
 		}
 
-		public static bool Navigate(this Windows.UI.Xaml.Controls.Frame frame, Xamarin.Forms.Page page)
+		public static bool Navigate(this Windows.UI.Xaml.Controls.Frame frame, Page page)
 		{
-			var id = Guid.NewGuid();
-			XFEmbeddedPage.Pages.Add(id, page);
-			return frame.Navigate(typeof(XFEmbeddedPage), id);
+			if (page == null)
+			{
+				throw new ArgumentNullException(nameof(page));
+			}
+
+			Guid id = Guid.NewGuid();
+			FormsEmbeddedPageWrapper.Pages.Add(id, page);
+			return frame.Navigate(typeof(FormsEmbeddedPageWrapper), id);
 		}
 	}
 }
