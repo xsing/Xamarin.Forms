@@ -8,8 +8,8 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-	    <CommandBar>
+	    <Button HorizontalAlignment="Center" Content="Navigate To Standard UWP Page" Click="ButtonBase_OnClick"></Button>
+        <CommandBar>
 		    <AppBarButton Icon="List" Label="Hello">
 			    <AppBarButton.Flyout>
 				    <Flyout x:Name="Flyout">

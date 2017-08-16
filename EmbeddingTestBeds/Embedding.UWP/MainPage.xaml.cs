@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Embedding.XF;
 using Xamarin.Forms.Platform.UWP;
 
@@ -16,6 +17,11 @@ namespace Embedding.UWP
 			InitializeComponent();
 
 			HelloFlyout.Content = new Hello().CreateFrameworkElement();
+		}
+
+		void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+		{
+			Frame.Navigate(typeof(Page1));
 		}
 	}
 }

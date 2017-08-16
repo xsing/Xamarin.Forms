@@ -7,6 +7,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
@@ -16,6 +17,7 @@ using Windows.UI.Xaml.Navigation;
 using Xamarin.Forms;
 using Application = Windows.UI.Xaml.Application;
 using Frame = Windows.UI.Xaml.Controls.Frame;
+using NavigationEventArgs = Windows.UI.Xaml.Navigation.NavigationEventArgs;
 
 namespace Embedding.UWP
 {
@@ -44,7 +46,7 @@ namespace Embedding.UWP
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
             {
-                this.DebugSettings.EnableFrameRateCounter = true;
+                //this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
             Frame rootFrame = Window.Current.Content as Frame;
@@ -57,6 +59,7 @@ namespace Embedding.UWP
                 rootFrame = new Frame();
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
+	            rootFrame.Navigated += OnNavigated;
 
 	            Forms.Init(e);
 
@@ -67,6 +70,15 @@ namespace Embedding.UWP
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
+
+	            // Register a handler for BackRequested events and set the
+	            // visibility of the Back button
+	            SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+
+	            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+		            rootFrame.CanGoBack  ?
+			            AppViewBackButtonVisibility.Visible :
+			            AppViewBackButtonVisibility.Collapsed;
             }
 
             if (e.PrelaunchActivated == false)
@@ -82,6 +94,26 @@ namespace Embedding.UWP
                 Window.Current.Activate();
             }
         }
+
+	    private void OnBackRequested(object sender, BackRequestedEventArgs e)
+	    {
+		    Frame rootFrame = Window.Current.Content as Frame;
+
+		    if (rootFrame.CanGoBack)
+		    {
+			    e.Handled = true;
+			    rootFrame.GoBack();
+		    }
+	    }
+
+	    private void OnNavigated(object sender, NavigationEventArgs e)
+	    {
+		    // Each time a navigation event occurs, update the Back button's visibility
+		    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+			    ((Frame)sender).CanGoBack ?
+				    AppViewBackButtonVisibility.Visible :
+				    AppViewBackButtonVisibility.Collapsed;
+	    }
 
         /// <summary>
         /// Invoked when Navigation to a certain page fails
