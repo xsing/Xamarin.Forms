@@ -24,6 +24,8 @@ namespace Xamarin.Forms.Platform.Android
 		AndroidApplicationLifecycleState _currentState;
 		LinearLayout _layout;
 
+		readonly PageListener _popupRequestHelper;
+
 		int _nextActivityResultCallbackKey;
 
 		AndroidApplicationLifecycleState _previousState;
@@ -32,6 +34,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			_previousState = AndroidApplicationLifecycleState.Uninitialized;
 			_currentState = AndroidApplicationLifecycleState.Uninitialized;
+			_popupRequestHelper = new PageListener(this);
 		}
 
 		public event EventHandler ConfigurationChanged;
@@ -147,9 +150,7 @@ namespace Xamarin.Forms.Platform.Android
 			// may never be called
 			base.OnDestroy();
 
-			MessagingCenter.Unsubscribe<Page, AlertArguments>(this, Page.AlertSignalName);
-			MessagingCenter.Unsubscribe<Page, bool>(this, Page.BusySetSignalName);
-			MessagingCenter.Unsubscribe<Page, ActionSheetArguments>(this, Page.ActionSheetSignalName);
+			_popupRequestHelper?.Dispose();
 
 			if (_canvas != null)
 				((IDisposable)_canvas).Dispose();
@@ -241,48 +242,7 @@ namespace Xamarin.Forms.Platform.Android
 				return;
 			}
 
-			var busyCount = 0;
-			MessagingCenter.Subscribe(this, Page.BusySetSignalName, (Page sender, bool enabled) =>
-			{
-				busyCount = Math.Max(0, enabled ? busyCount + 1 : busyCount - 1);
-				UpdateProgressBarVisibility(busyCount > 0);
-			});
-
-			UpdateProgressBarVisibility(busyCount > 0);
-
-			MessagingCenter.Subscribe(this, Page.AlertSignalName, (Page sender, AlertArguments arguments) =>
-			{
-				AlertDialog alert = new AlertDialog.Builder(this).Create();
-				alert.SetTitle(arguments.Title);
-				alert.SetMessage(arguments.Message);
-				if (arguments.Accept != null)
-					alert.SetButton((int)DialogButtonType.Positive, arguments.Accept, (o, args) => arguments.SetResult(true));
-				alert.SetButton((int)DialogButtonType.Negative, arguments.Cancel, (o, args) => arguments.SetResult(false));
-				alert.CancelEvent += (o, args) => { arguments.SetResult(false); };
-				alert.Show();
-			});
-
-			MessagingCenter.Subscribe(this, Page.ActionSheetSignalName, (Page sender, ActionSheetArguments arguments) =>
-			{
-				var builder = new AlertDialog.Builder(this);
-				builder.SetTitle(arguments.Title);
-				string[] items = arguments.Buttons.ToArray();
-				builder.SetItems(items, (sender2, args) => { arguments.Result.TrySetResult(items[args.Which]); });
-
-				if (arguments.Cancel != null)
-					builder.SetPositiveButton(arguments.Cancel, delegate { arguments.Result.TrySetResult(arguments.Cancel); });
-
-				if (arguments.Destruction != null)
-					builder.SetNegativeButton(arguments.Destruction, delegate { arguments.Result.TrySetResult(arguments.Destruction); });
-
-				AlertDialog dialog = builder.Create();
-				builder.Dispose();
-				//to match current functionality of renderer we set cancelable on outside
-				//and return null
-				dialog.SetCanceledOnTouchOutside(true);
-				dialog.CancelEvent += (sender3, e) => { arguments.SetResult(null); };
-				dialog.Show();
-			});
+			_popupRequestHelper.ResetBusyCount();
 
 			_canvas = new Platform(this);
 			if (_application != null)
@@ -329,16 +289,6 @@ namespace Xamarin.Forms.Platform.Android
 			}
 
 			Window.SetSoftInputMode(adjust);
-		}
-
-		void UpdateProgressBarVisibility(bool isBusy)
-		{
-			if (!Forms.SupportsProgress)
-				return;
-#pragma warning disable 612, 618
-			SetProgressBarIndeterminate(true);
-			SetProgressBarIndeterminateVisibility(isBusy);
-#pragma warning restore 612, 618
 		}
 
 		internal class DefaultApplication : Application

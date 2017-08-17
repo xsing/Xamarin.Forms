@@ -54,7 +54,8 @@ namespace Xamarin.Forms.Platform.Android
 		Page _navigationPageCurrentPage;
 		NavigationModel _navModel = new NavigationModel();
 
-		bool _embedded = true;
+		readonly bool _embedded;
+		static PageListener s_embeddedPageListener;
 
 		internal Platform(Context context, bool embedded = false)
 		{
@@ -70,6 +71,12 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (embedded)
 			{
+				// Set up handling of DisplayAlert/DisplayActionSheet/UpdateProgressBarVisibility
+				if (s_embeddedPageListener == null)
+				{
+					s_embeddedPageListener = new PageListener(context);
+				}
+
 				return;
 			}
 
@@ -167,6 +174,8 @@ namespace Xamarin.Forms.Platform.Android
 			_disposed = true;
 
 			SetPage(null);
+
+			s_embeddedPageListener?.Dispose();
 
 			FormsApplicationActivity.BackPressed -= HandleBackPressed;
 			_toolbarTracker.CollectionChanged -= ToolbarTrackerOnCollectionChanged;

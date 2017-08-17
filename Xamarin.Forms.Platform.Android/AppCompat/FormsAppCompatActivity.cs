@@ -34,7 +34,8 @@ namespace Xamarin.Forms.Platform.Android
 		readonly ConcurrentDictionary<int, Action<Result, Intent>> _activityResultCallbacks = new ConcurrentDictionary<int, Action<Result, Intent>>();
 
 		Application _application;
-		int _busyCount;
+		readonly PageListener _popupRequestHelper;
+
 		AndroidApplicationLifecycleState _currentState;
 		ARelativeLayout _layout;
 
@@ -53,6 +54,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			_previousState = AndroidApplicationLifecycleState.Uninitialized;
 			_currentState = AndroidApplicationLifecycleState.Uninitialized;
+			_popupRequestHelper = new PageListener(this);
 		}
 
 		IApplicationController Controller => _application;
@@ -205,10 +207,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		protected override void OnDestroy()
 		{
-			MessagingCenter.Unsubscribe<Page, AlertArguments>(this, Page.AlertSignalName);
-			MessagingCenter.Unsubscribe<Page, bool>(this, Page.BusySetSignalName);
-			MessagingCenter.Unsubscribe<Page, ActionSheetArguments>(this, Page.ActionSheetSignalName);
-
+			_popupRequestHelper?.Dispose();
 			_platform?.Dispose();
 
 			// call at the end to avoid race conditions with Platform dispose
@@ -326,10 +325,7 @@ namespace Xamarin.Forms.Platform.Android
 				return;
 			}
 
-			_busyCount = 0;
-			MessagingCenter.Subscribe<Page, bool>(this, Page.BusySetSignalName, OnPageBusy);
-			MessagingCenter.Subscribe<Page, AlertArguments>(this, Page.AlertSignalName, OnAlertRequested);
-			MessagingCenter.Subscribe<Page, ActionSheetArguments>(this, Page.ActionSheetSignalName, OnActionSheetRequested);
+			_popupRequestHelper.ResetBusyCount();
 
 			_platform = new AppCompat.Platform(this);
 			if (_application != null)
@@ -337,47 +333,6 @@ namespace Xamarin.Forms.Platform.Android
 			_platform.SetPage(page);
 			_layout.AddView(_platform);
 			_layout.BringToFront();
-		}
-
-		void OnActionSheetRequested(Page sender, ActionSheetArguments arguments)
-		{
-			var builder = new AlertDialog.Builder(this);
-			builder.SetTitle(arguments.Title);
-			string[] items = arguments.Buttons.ToArray();
-			builder.SetItems(items, (o, args) => arguments.Result.TrySetResult(items[args.Which]));
-
-			if (arguments.Cancel != null)
-				builder.SetPositiveButton(arguments.Cancel, (o, args) => arguments.Result.TrySetResult(arguments.Cancel));
-
-			if (arguments.Destruction != null)
-				builder.SetNegativeButton(arguments.Destruction, (o, args) => arguments.Result.TrySetResult(arguments.Destruction));
-
-			AlertDialog dialog = builder.Create();
-			builder.Dispose();
-			//to match current functionality of renderer we set cancelable on outside
-			//and return null
-			dialog.SetCanceledOnTouchOutside(true);
-			dialog.CancelEvent += (o, e) => arguments.SetResult(null);
-			dialog.Show();
-		}
-
-		void OnAlertRequested(Page sender, AlertArguments arguments)
-		{
-			AlertDialog alert = new AlertDialog.Builder(this).Create();
-			alert.SetTitle(arguments.Title);
-			alert.SetMessage(arguments.Message);
-			if (arguments.Accept != null)
-				alert.SetButton((int)DialogButtonType.Positive, arguments.Accept, (o, args) => arguments.SetResult(true));
-			alert.SetButton((int)DialogButtonType.Negative, arguments.Cancel, (o, args) => arguments.SetResult(false));
-			alert.CancelEvent += (o, args) => { arguments.SetResult(false); };
-			alert.Show();
-		}
-
-		void OnPageBusy(Page sender, bool enabled)
-		{
-			_busyCount = Math.Max(0, enabled ? _busyCount + 1 : _busyCount - 1);
-
-			UpdateProgressBarVisibility(_busyCount > 0);
 		}
 
 		async void OnStateChanged()
@@ -448,16 +403,6 @@ namespace Xamarin.Forms.Platform.Android
 				if (Forms.TitleBarVisibility != AndroidTitleBarVisibility.Default)
 					Forms.TitleBarVisibility = AndroidTitleBarVisibility.Default;
 			}
-		}
-
-		void UpdateProgressBarVisibility(bool isBusy)
-		{
-			if (!Forms.SupportsProgress)
-				return;
-#pragma warning disable 612, 618
-			SetProgressBarIndeterminate(true);
-			SetProgressBarIndeterminateVisibility(isBusy);
-#pragma warning restore 612, 618
 		}
 
 		internal class DefaultApplication : Application
