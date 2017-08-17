@@ -78,6 +78,7 @@ namespace Xamarin.Forms
 
 #if WINDOWS_UWP
 			SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+			Platform.UWP.Platform.SubscribeAlertsAndActionSheets();
 #endif
 		}
 
