@@ -19,6 +19,7 @@ namespace Embedding.Droid
 	public class MainActivity : FragmentActivity
 	{
 		Fragment _hello;
+		Fragment _alertsAndActionSheets;
 
 		protected override void OnCreate(Bundle bundle)
 		{
@@ -36,17 +37,31 @@ namespace Embedding.Droid
 
 		public void ShowHello()
 		{
-			// Create a XF History page as a fragment
+			// Create a XF Hello page as a fragment
 			if (_hello == null)
 			{
 				_hello = new Hello().CreateSupportFragment(this);
 			}
 
-			// And push that fragment onto the stack
+			ShowEmbeddedPageFragment(_hello);
+		}
+
+		public void ShowAlertsAndActionSheets()
+		{
+			if (_alertsAndActionSheets== null)
+			{
+				_alertsAndActionSheets = new AlertsAndActionSheets().CreateSupportFragment(this);
+			}
+
+			ShowEmbeddedPageFragment(_alertsAndActionSheets);
+		}
+
+		void ShowEmbeddedPageFragment(Fragment fragment)
+		{
 			FragmentTransaction ft = SupportFragmentManager.BeginTransaction();
 
 			ft.AddToBackStack(null);
-			ft.Replace(Resource.Id.fragment_frame_layout, _hello, "hello");
+			ft.Replace(Resource.Id.fragment_frame_layout, fragment, "hello");
 			
 			ft.Commit();
 		}
@@ -57,21 +72,21 @@ namespace Embedding.Droid
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 		{
 			var view =  inflater.Inflate(Resource.Layout.MainFragment, container, false);
-			Button button = view.FindViewById<Button>(Resource.Id.showEmbeddedButton);
+			var showEmbeddedButton = view.FindViewById<Button>(Resource.Id.showEmbeddedButton);
+			var showAlertsActionSheets = view.FindViewById<Button>(Resource.Id.showAlertsActionSheets);
 
-			button.Click += Button_Click;
-
-			// Listen for lookup requests from the history tracker
-			//MessagingCenter.Subscribe<History, string>(this, History.HistoryItemSelected, (history, postalCode) =>
-			//{
-			//	Activity.FragmentManager.PopBackStack();
-			//	_lastPostalCode = postalCode;
-			//});
+			showEmbeddedButton.Click += ShowEmbeddedClick;
+			showAlertsActionSheets.Click += ShowAlertsActionSheetsClick;
 
 			return view;
 		}
 
-		void Button_Click(object sender, EventArgs e)
+		void ShowAlertsActionSheetsClick(object sender, EventArgs eventArgs)
+		{
+			((MainActivity)Activity).ShowAlertsAndActionSheets();
+		}
+
+		void ShowEmbeddedClick(object sender, EventArgs e)
 		{
 			((MainActivity)Activity).ShowHello();
 		}
