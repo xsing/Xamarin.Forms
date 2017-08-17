@@ -31,7 +31,6 @@ namespace Embedding.iOS
 				TextColor = UIColor.White
 			});
 
-			// TODO hartez 2017/08/15 14:15:18 This is giving me a null, take a look at WeatherApp and figure out what we're missing	
 			_mainController = Storyboard.InstantiateInitialViewController() as ViewController;
 			_navigation = new UINavigationController(_mainController);
 

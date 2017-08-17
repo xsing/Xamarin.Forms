@@ -32,5 +32,10 @@ namespace Embedding.UWP
 		{
 			Frame.Navigate(new Page3());
 		}
+
+		void NavToAlertsAndActionSheets(object sender, RoutedEventArgs e)
+		{
+			Frame.Navigate(new AlertsAndActionSheets());
+		}
 	}
 }

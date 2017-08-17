@@ -37,6 +37,8 @@
 					Content="Navigate To Forms Page 3" Click="NavToFormsPage3" />
 			<Button HorizontalAlignment="Center" Margin="5"
 					Content="Navigate To Forms Page 4" Click="NavToFormsPage4" />
+			<Button HorizontalAlignment="Center" Margin="5"
+					Content="Navigate To Alerts and ActionSheets" Click="NavToAlertsAndActionSheets" />
 		</StackPanel>
 		
 		
