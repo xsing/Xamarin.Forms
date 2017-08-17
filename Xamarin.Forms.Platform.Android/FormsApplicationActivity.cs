@@ -24,7 +24,7 @@ namespace Xamarin.Forms.Platform.Android
 		AndroidApplicationLifecycleState _currentState;
 		LinearLayout _layout;
 
-		readonly PageListener _popupRequestHelper;
+		readonly PopupRequestHelper _popupRequestHelper;
 
 		int _nextActivityResultCallbackKey;
 
@@ -34,7 +34,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			_previousState = AndroidApplicationLifecycleState.Uninitialized;
 			_currentState = AndroidApplicationLifecycleState.Uninitialized;
-			_popupRequestHelper = new PageListener(this);
+			_popupRequestHelper = new PopupRequestHelper(this);
 		}
 
 		public event EventHandler ConfigurationChanged;

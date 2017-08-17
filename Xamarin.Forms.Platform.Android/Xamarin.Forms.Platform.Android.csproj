@@ -157,7 +157,7 @@
     <Compile Include="NativeViewWrapperRenderer.cs" />
     <Compile Include="OnLayoutDelegate.cs" />
     <Compile Include="OnMeasureDelegate.cs" />
-    <Compile Include="PageListener.cs" />
+    <Compile Include="PopupRequestHelper.cs" />
     <Compile Include="PanGestureHandler.cs" />
     <Compile Include="PinchGestureHandler.cs" />
     <Compile Include="PlatformConfigurationExtensions.cs" />

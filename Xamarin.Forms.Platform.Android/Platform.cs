@@ -55,7 +55,7 @@ namespace Xamarin.Forms.Platform.Android
 		NavigationModel _navModel = new NavigationModel();
 
 		readonly bool _embedded;
-		static PageListener s_embeddedPageListener;
+		static PopupRequestHelper s_embeddedPopupRequestHelper;
 
 		internal Platform(Context context, bool embedded = false)
 		{
@@ -72,9 +72,9 @@ namespace Xamarin.Forms.Platform.Android
 			if (embedded)
 			{
 				// Set up handling of DisplayAlert/DisplayActionSheet/UpdateProgressBarVisibility
-				if (s_embeddedPageListener == null)
+				if (s_embeddedPopupRequestHelper == null)
 				{
-					s_embeddedPageListener = new PageListener(context);
+					s_embeddedPopupRequestHelper = new PopupRequestHelper(context);
 				}
 
 				return;
@@ -175,7 +175,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			SetPage(null);
 
-			s_embeddedPageListener?.Dispose();
+			s_embeddedPopupRequestHelper?.Dispose();
 
 			FormsApplicationActivity.BackPressed -= HandleBackPressed;
 			_toolbarTracker.CollectionChanged -= ToolbarTrackerOnCollectionChanged;

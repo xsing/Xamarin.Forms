@@ -34,7 +34,7 @@ namespace Xamarin.Forms.Platform.Android
 		readonly ConcurrentDictionary<int, Action<Result, Intent>> _activityResultCallbacks = new ConcurrentDictionary<int, Action<Result, Intent>>();
 
 		Application _application;
-		readonly PageListener _popupRequestHelper;
+		readonly PopupRequestHelper _popupRequestHelper;
 
 		AndroidApplicationLifecycleState _currentState;
 		ARelativeLayout _layout;
@@ -54,7 +54,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			_previousState = AndroidApplicationLifecycleState.Uninitialized;
 			_currentState = AndroidApplicationLifecycleState.Uninitialized;
-			_popupRequestHelper = new PageListener(this);
+			_popupRequestHelper = new PopupRequestHelper(this);
 		}
 
 		IApplicationController Controller => _application;
