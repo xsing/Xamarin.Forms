@@ -1,4 +1,5 @@
-﻿using CoreGraphics;
+﻿using System;
+using CoreGraphics;
 using Embedding.XF;
 using Foundation;
 using UIKit;
@@ -13,10 +14,14 @@ namespace Embedding.iOS
 		public static AppDelegate Shared;
 		public static UIStoryboard Storyboard = UIStoryboard.FromName("Main", null);
 
-		UIWindow _window;
 		UIViewController _hello;
-		UINavigationController _navigation;
+		UIViewController _alertsAndActionSheets;
+
 		UIBarButtonItem _helloButton;
+		UIBarButtonItem _alertsAndActionSheetsButton;
+
+		UIWindow _window;
+		UINavigationController _navigation;
 		ViewController _mainController;
 
 		public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
@@ -33,13 +38,6 @@ namespace Embedding.iOS
 
 			_mainController = Storyboard.InstantiateInitialViewController() as ViewController;
 			_navigation = new UINavigationController(_mainController);
-
-			// Listen for lookup requests from the history tracker
-			//MessagingCenter.Subscribe<History, string>(this, History.HistoryItemSelected, (history, postalCode) =>
-			//{
-			//	_navigation.PopToRootViewController(true);
-			//	_weatherController.SetPostalCode(postalCode);
-			//});
 
 			_window.RootViewController = _navigation;
 			_window.MakeKeyAndVisible();
@@ -62,6 +60,21 @@ namespace Embedding.iOS
 			return _helloButton;
 		}
 
+		//public UIBarButtonItem CreateAlertsAndActionSheetsButton()
+		//{
+		//	if (_alertsAndActionSheetsButton == null)
+		//	{
+		//		var btn = new UIButton(new CGRect(0, 0, 88, 44));
+		//		btn.SetTitle("AaA", UIControlState.Normal);
+		//		btn.SetTitleColor(UIColor.Blue, UIControlState.Normal);
+		//		btn.TouchUpInside += (sender, e) => ShowAlertsAndActionSheets();
+
+		//		_alertsAndActionSheetsButton  = new UIBarButtonItem(btn);
+		//	}
+
+		//	return _alertsAndActionSheetsButton;
+		//}
+
 		public void ShowHello()
 		{
 			// Create a XF History page as a view controller
@@ -72,6 +85,18 @@ namespace Embedding.iOS
 
 			// And push it onto the navigation stack
 			_navigation.PushViewController(_hello, true);
+		}
+
+		public void ShowAlertsAndActionSheets()
+		{
+			// Create a XF History page as a view controller
+			if (_alertsAndActionSheets == null)
+			{
+				_alertsAndActionSheets = new AlertsAndActionSheets().CreateViewController();
+			}
+
+			// And push it onto the navigation stack
+			_navigation.PushViewController(_alertsAndActionSheets, true);
 		}
 	}
 }

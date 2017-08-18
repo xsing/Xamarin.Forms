@@ -14,6 +14,7 @@ namespace Embedding.iOS
 		{
 			base.ViewDidLoad();
 			NavigationItem.RightBarButtonItem = AppDelegate.Shared.CreateHelloButton();
+			ShowAlertsAndActionSheets.TouchUpInside += (sender, args) => AppDelegate.Shared.ShowAlertsAndActionSheets();
 		}
 
 		public override void DidReceiveMemoryWarning()
