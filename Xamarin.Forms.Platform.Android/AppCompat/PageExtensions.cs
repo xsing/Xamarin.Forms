@@ -9,7 +9,7 @@ namespace Xamarin.Forms.Platform.Android
 {
 	public static class PageExtensions
 	{
-		public static Fragment CreateFragment(this Page view, Context context)
+		public static Fragment CreateFragment(this ContentPage view, Context context)
 		{
 			if (!Forms.IsInitialized)
 				throw new InvalidOperationException("call Forms.Init() before this");
@@ -28,7 +28,7 @@ namespace Xamarin.Forms.Platform.Android
 			return new EmbeddedFragment(vg);
 		}
 
-		public static global::Android.Support.V4.App.Fragment CreateSupportFragment(this Page view, Context context)
+		public static global::Android.Support.V4.App.Fragment CreateSupportFragment(this ContentPage view, Context context)
 		{
 			if (!Forms.IsInitialized)
 				throw new InvalidOperationException("call Forms.Init() before this");

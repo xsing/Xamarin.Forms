@@ -6,7 +6,7 @@ namespace Xamarin.Forms.Platform.UWP
 {
 	public sealed partial class FormsEmbeddedPageWrapper : Windows.UI.Xaml.Controls.Page
 	{
-		internal static Dictionary<Guid, Page> Pages = new Dictionary<Guid, Page>();
+		internal static Dictionary<Guid, ContentPage> Pages = new Dictionary<Guid, ContentPage>();
 
 		public FormsEmbeddedPageWrapper()
 		{
@@ -25,7 +25,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 			// Find the page instance in the dictionary and then discard it so we don't prevent it from being collected
 			var key = (Guid)e.Parameter;
-			Page page = Pages[key];
+			var page = Pages[key];
 			Pages.Remove(key); 
 
 			// Convert that page into a FrameWorkElement we can display in the ContentPresenter
@@ -42,7 +42,12 @@ namespace Xamarin.Forms.Platform.UWP
 
 	public static class PageExtensions
 	{
-		public static FrameworkElement CreateFrameworkElement(this VisualElement visualElement)
+		public static FrameworkElement CreateFrameworkElement(this ContentPage contentPage)
+		{
+			return contentPage.ToFrameworkElement();
+		}
+
+		internal static FrameworkElement ToFrameworkElement(this VisualElement visualElement)
 		{
 			if (!Forms.IsInitialized)
 			{
@@ -57,7 +62,7 @@ namespace Xamarin.Forms.Platform.UWP
 
 			if (renderer == null)
 			{
-				throw new InvalidOperationException($"Could not find or create a renderer for the VisualElement {visualElement}");
+				throw new InvalidOperationException($"Could not find or create a renderer for {visualElement}");
 			}
 
 			var frameworkElement = renderer.ContainerElement;
@@ -70,7 +75,7 @@ namespace Xamarin.Forms.Platform.UWP
 			return frameworkElement;
 		}
 
-		public static bool Navigate(this Windows.UI.Xaml.Controls.Frame frame, Page page)
+		public static bool Navigate(this Windows.UI.Xaml.Controls.Frame frame, ContentPage page)
 		{
 			if (page == null)
 			{

@@ -7,7 +7,7 @@ namespace Embedding.UWP
 {
 	public sealed partial class MainPage : Page
 	{
-		readonly Xamarin.Forms.Page _page4;
+		readonly Xamarin.Forms.ContentPage _page4;
 
 		public MainPage()
 		{
