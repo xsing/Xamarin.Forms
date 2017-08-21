@@ -53,12 +53,14 @@ namespace Xamarin.Forms.Platform.UWP
 
 			new WindowsPlatform(root).SetPlatformDisconnected(visualElement);
 
-			var frameworkElement = visualElement.GetOrCreateRenderer() as FrameworkElement;
+			var renderer = visualElement.GetOrCreateRenderer();
 
-			if (frameworkElement == null)
+			if (renderer == null)
 			{
 				throw new InvalidOperationException($"Could not find or create a renderer for the VisualElement {visualElement}");
 			}
+
+			var frameworkElement = renderer.ContainerElement;
 
 			frameworkElement.Loaded += (sender, args) =>
 			{
