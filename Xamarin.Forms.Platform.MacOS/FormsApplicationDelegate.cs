@@ -106,18 +106,37 @@ namespace Xamarin.Forms.Platform.MacOS
 				var menuItem = new NSMenuItem(menu.Text);
 				var subMenu = new NSMenu(menu.Text);
 				menuItem.Submenu = subMenu;
-				if (menu.Items.Count > 0)
+				foreach (var item in menu.Items)
 				{
-					foreach (var item in menu.Items)
-					{
-						var subMenuItem = new NSMenuItem(item.Text, (sender, e) => { item.Activate(); });
-						if (!string.IsNullOrEmpty(item.Icon))
-							menuItem.Image = new NSImage(item.Icon);
-						subMenu.AddItem(subMenuItem);
-					}
+					var subMenuItem = new NSMenuItem(item.Text, (sender, e) => item.Activate());
+					UpdateMenuItem(item, subMenuItem, new string[] { nameof(MenuItem.IsEnabled), nameof(MenuItem.IsEnabled) });
+					subMenu.AddItem(subMenuItem);
+					item.PropertyChanged += (sender, e) => UpdateMenuItem((sender as MenuItem), subMenuItem, new string[] { e.PropertyName });
 				}
 				AddMenu(menu, subMenu);
 				nsMenu.AddItem(menuItem);
+			}
+		}
+
+		void UpdateMenuItem(MenuItem item, NSMenuItem menuItem, string[] properties)
+		{
+			foreach (var property in properties)
+			{
+				if (property.Equals(nameof(MenuItem.Text)))
+				{
+					menuItem.Title = item.Text;
+				}
+				if (property.Equals(nameof(MenuItem.IsEnabled)))
+				{
+					menuItem.Enabled = item.IsEnabled;
+				}
+				if (property.Equals(nameof(MenuItem.Icon)))
+				{
+					if (!string.IsNullOrEmpty(item.Icon))
+						menuItem.Image = new NSImage(item.Icon);
+					else
+						menuItem.Image = null;
+				}
 			}
 		}
 	}

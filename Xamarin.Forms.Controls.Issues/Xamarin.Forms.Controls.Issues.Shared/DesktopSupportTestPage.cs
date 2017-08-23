@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xamarin.Forms.CustomAttributes;
 using Xamarin.Forms.Internals;
 
@@ -115,11 +116,19 @@ namespace Xamarin.Forms.Controls.Issues
 			var btnAdd3 = new Button { Text = "Add 3 Menu Hello", Command = new Command(() => AddMenu(3)) };
 			var btnAdd3Add2 = new Button { Text = "Add Menu Hello with 2 Subitems", Command = new Command(() => AddMenu(3, true, 2)) };
 			var btnAddImage = new Button { Text = "Add Menu Hello With Icon", Command = new Command(() => AddMenu(1, true, 1, withImage:true)) };
+			var btnAddChangeText = new Button { Text = "Add Menu Change Text and disable after 3 seconds", Command = new Command(async () => 
+			{
+				AddMenu(1,true);
+				await Task.Delay(3000);
+				Application.Current.MainMenu[0].Items[0].Text = "hello changed";
+				Application.Current.MainMenu[0].Items[0].IsEnabled = false;
+			})};
 			layout.Children.Add(btn);
 			layout.Children.Add(btnAdd);
 			layout.Children.Add(btnAdd3);
 			layout.Children.Add(btnAdd3Add2);
 			layout.Children.Add(btnAddImage);
+			layout.Children.Add(btnAddChangeText);
 			layout.Children.Add(label);
 			return new ContentPage { Title = "Menus", Content = layout };
 		}
