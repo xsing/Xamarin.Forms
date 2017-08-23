@@ -95,7 +95,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			var weakRecognizer = new WeakReference(recognizer);
 			var weakEventTracker = new WeakReference(this);
 
-
+#if !__MOBILE__
 			var clickRecognizer = recognizer as ClickGestureRecognizer;
 			if (clickRecognizer != null)
 			{
@@ -111,7 +111,7 @@ namespace Xamarin.Forms.Platform.MacOS
 				var uiRecognizer = CreateClickRecognizer((int)clickRecognizer.Buttons, clickRecognizer.NumberOfClicksRequired, returnAction);
 				return uiRecognizer;
 			}
-
+#endif
 			var tapRecognizer = recognizer as TapGestureRecognizer;
 			if (tapRecognizer != null)
 			{
@@ -256,14 +256,6 @@ namespace Xamarin.Forms.Platform.MacOS
 			return null;
 		}
 
-		private NativeGestureRecognizer CreateClickRecognizer(int buttonMask, int numberOfClicksRequired, Action returnAction)
-		{
-			var result = new NSClickGestureRecognizer(returnAction);
-			result.ButtonMask = (nuint)buttonMask;
-			result.NumberOfClicksRequired = numberOfClicksRequired;
-			return result;
-		}
-
 #if __MOBILE__
 		UIPanGestureRecognizer CreatePanRecognizer(int numTouches, Action<UIPanGestureRecognizer> action)
 		{
@@ -326,6 +318,14 @@ namespace Xamarin.Forms.Platform.MacOS
 			return true;
 		}
 #else
+		NativeGestureRecognizer CreateClickRecognizer(int buttonMask, int numberOfClicksRequired, Action returnAction)
+		{
+			var result = new NSClickGestureRecognizer(returnAction);
+			result.ButtonMask = (nuint)buttonMask;
+			result.NumberOfClicksRequired = numberOfClicksRequired;
+			return result;
+		}
+
 		NSPanGestureRecognizer CreatePanRecognizer(int numTouches, Action<NSPanGestureRecognizer> action)
 		{
 			var result = new NSPanGestureRecognizer(action);
