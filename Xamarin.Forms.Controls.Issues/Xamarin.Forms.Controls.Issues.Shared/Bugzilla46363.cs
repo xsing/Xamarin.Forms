@@ -17,7 +17,7 @@ namespace Xamarin.Forms.Controls.Issues
 		const string Target = "Two";
 		const string ContextAction = "Context Action";
 		const string TapSuccess = "Tap Success";
-		const string TapFailure = "TapFailure";
+		const string TapFailure = "Tap command executed more than once";
 		const string ContextSuccess = "Context Menu Success";
 		const string Testing = "Testing";
 
