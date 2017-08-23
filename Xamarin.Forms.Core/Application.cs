@@ -24,6 +24,8 @@ namespace Xamarin.Forms
 		ResourceDictionary _resources;
 		bool _saveAgain;
 
+		Menu _menus;
+
 		protected Application()
 		{
 			var f = false;
@@ -35,6 +37,12 @@ namespace Xamarin.Forms
 			SystemResources = DependencyService.Get<ISystemResourcesProvider>().GetSystemResources();
 			SystemResources.ValuesChanged += OnParentResourcesChanged;
 			_platformConfigurationRegistry = new Lazy<PlatformConfigurationRegistry<Application>>(() => new PlatformConfigurationRegistry<Application>(this));
+			_menus = new Menu();
+		}
+
+		public void Quit()
+		{
+			Device.PlatformServices?.QuitApp();
 		}
 
 		public IAppLinks AppLinks
@@ -48,6 +56,8 @@ namespace Xamarin.Forms
 				return _appIndexProvider.AppLinks;
 			}
 		}
+
+		public Menu MainMenu => _menus;
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public static void SetCurrentApplication(Application value) => Current = value;
