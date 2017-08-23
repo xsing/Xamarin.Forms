@@ -41,6 +41,9 @@ namespace Xamarin.Forms.Platform.MacOS
 				throw new InvalidOperationException("You MUST invoke LoadApplication () before calling base.FinishedLaunching ()");
 
 			SetMainPage();
+
+			SetMainMenu();
+
 			_application.SendStart();
 		}
 
@@ -80,6 +83,42 @@ namespace Xamarin.Forms.Platform.MacOS
 			var platformRenderer = (PlatformRenderer)MainWindow.ContentViewController;
 			MainWindow.ContentViewController = _application.MainPage.CreateViewController();
 			(platformRenderer?.Platform as IDisposable)?.Dispose();
+		}
+
+		void SetMainMenu()
+		{
+			_application.MainMenu.PropertyChanged += MainMenuOnPropertyChanged;
+			MainMenuOnPropertyChanged(this, null);
+		}
+
+		void MainMenuOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			//for now we can't remove the 1st menu item
+			for (var i = NSApplication.SharedApplication.MainMenu.Count - 1; i > 0; i--)
+				NSApplication.SharedApplication.MainMenu.RemoveItemAt(i);
+			AddMenu(_application.MainMenu, NSApplication.SharedApplication.MainMenu);
+		}
+
+		void AddMenu(Menu menus, NSMenu nsMenu)
+		{
+			foreach (var menu in menus)
+			{
+				var menuItem = new NSMenuItem(menu.Text);
+				var subMenu = new NSMenu(menu.Text);
+				menuItem.Submenu = subMenu;
+				if (menu.Items.Count > 0)
+				{
+					foreach (var item in menu.Items)
+					{
+						var subMenuItem = new NSMenuItem(item.Text, (sender, e) => { item.Activate(); });
+						if (!string.IsNullOrEmpty(item.Icon))
+							menuItem.Image = new NSImage(item.Icon);
+						subMenu.AddItem(subMenuItem);
+					}
+				}
+				AddMenu(menu, subMenu);
+				nsMenu.AddItem(menuItem);
+			}
 		}
 	}
 }
