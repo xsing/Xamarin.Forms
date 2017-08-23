@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using AppKit;
+using Xamarin.Forms.Platform.macOS.Extensions;
 
 namespace Xamarin.Forms.Platform.MacOS
 {
@@ -43,7 +44,6 @@ namespace Xamarin.Forms.Platform.MacOS
 			SetMainPage();
 
 			SetMainMenu();
-
 			_application.SendStart();
 		}
 
@@ -96,48 +96,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			//for now we can't remove the 1st menu item
 			for (var i = NSApplication.SharedApplication.MainMenu.Count - 1; i > 0; i--)
 				NSApplication.SharedApplication.MainMenu.RemoveItemAt(i);
-			AddMenu(_application.MainMenu, NSApplication.SharedApplication.MainMenu);
-		}
-
-		void AddMenu(Menu menus, NSMenu nsMenu)
-		{
-			foreach (var menu in menus)
-			{
-				var menuItem = new NSMenuItem(menu.Text);
-				var subMenu = new NSMenu(menu.Text);
-				menuItem.Submenu = subMenu;
-				foreach (var item in menu.Items)
-				{
-					var subMenuItem = new NSMenuItem(item.Text, (sender, e) => item.Activate());
-					UpdateMenuItem(item, subMenuItem, new string[] { nameof(MenuItem.IsEnabled), nameof(MenuItem.IsEnabled) });
-					subMenu.AddItem(subMenuItem);
-					item.PropertyChanged += (sender, e) => UpdateMenuItem((sender as MenuItem), subMenuItem, new string[] { e.PropertyName });
-				}
-				AddMenu(menu, subMenu);
-				nsMenu.AddItem(menuItem);
-			}
-		}
-
-		void UpdateMenuItem(MenuItem item, NSMenuItem menuItem, string[] properties)
-		{
-			foreach (var property in properties)
-			{
-				if (property.Equals(nameof(MenuItem.Text)))
-				{
-					menuItem.Title = item.Text;
-				}
-				if (property.Equals(nameof(MenuItem.IsEnabled)))
-				{
-					menuItem.Enabled = item.IsEnabled;
-				}
-				if (property.Equals(nameof(MenuItem.Icon)))
-				{
-					if (!string.IsNullOrEmpty(item.Icon))
-						menuItem.Image = new NSImage(item.Icon);
-					else
-						menuItem.Image = null;
-				}
-			}
+			_application.MainMenu.ToNSMenu(NSApplication.SharedApplication.MainMenu);
 		}
 	}
 }

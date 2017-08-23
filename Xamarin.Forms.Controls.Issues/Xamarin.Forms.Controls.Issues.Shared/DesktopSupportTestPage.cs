@@ -97,7 +97,6 @@ namespace Xamarin.Forms.Controls.Issues
 				})
 			};
 
-
 			layout.Children.Add(label);
 			layout.Children.Add(box);
 			layout.Children.Add(btn);
@@ -105,6 +104,25 @@ namespace Xamarin.Forms.Controls.Issues
 			layout.Children.Add(btnRight);
 			layout.Children.Add(btnBoth);
 			return new ContentPage { Content = layout };
+		}
+
+		Page ContextMenuSupportPage()
+		{
+			var layout = new StackLayout();
+
+			var label = new Label { Text = "Click here to show context menu" };
+			var menu = new Menu();
+			AddMenu(1, true, 2, false, menu);
+			SetMenu(label, menu);
+			layout.Children.Add(label);
+
+			var box = new BoxView { Color = Color.Red, WidthRequest = 100, HeightRequest = 100 };
+			var menuBox = new Menu();
+			AddMenu(4, true, 2, false, menuBox,true);
+			SetMenu(box, menuBox);
+			layout.Children.Add(box);
+
+			return new ContentPage { Title = "Context Menu", Content = layout };
 		}
 
 		Page MenusSupportPage()
@@ -115,25 +133,31 @@ namespace Xamarin.Forms.Controls.Issues
 			var btnAdd = new Button { Text = "Add Menu Hello", Command = new Command(() => AddMenu(1)) };
 			var btnAdd3 = new Button { Text = "Add 3 Menu Hello", Command = new Command(() => AddMenu(3)) };
 			var btnAdd3Add2 = new Button { Text = "Add Menu Hello with 2 Subitems", Command = new Command(() => AddMenu(3, true, 2)) };
-			var btnAddImage = new Button { Text = "Add Menu Hello With Icon", Command = new Command(() => AddMenu(1, true, 1, withImage:true)) };
-			var btnAddChangeText = new Button { Text = "Add Menu Change Text and disable after 3 seconds", Command = new Command(async () => 
+			var btnAddImage = new Button { Text = "Add Menu Hello With Icon", Command = new Command(() => AddMenu(1, true, 1, withImage: true)) };
+			var btnAddSubmenus = new Button { Text = "Add Menu Hello With submenu", Command = new Command(() => AddMenu(1, true, 1, false, null, true)) };
+			var btnAddChangeText = new Button
 			{
-				AddMenu(1,true);
-				await Task.Delay(3000);
-				Application.Current.MainMenu[0].Items[0].Text = "hello changed";
-				Application.Current.MainMenu[0].Items[0].IsEnabled = false;
-			})};
+				Text = "Add Menu Change Text and disable after 3 seconds",
+				Command = new Command(async () =>
+						{
+							AddMenu(1, true);
+							await Task.Delay(3000);
+							Application.Current.MainMenu[0].Items[0].Text = "hello changed";
+							Application.Current.MainMenu[0].Items[0].IsEnabled = false;
+						})
+			};
 			layout.Children.Add(btn);
 			layout.Children.Add(btnAdd);
 			layout.Children.Add(btnAdd3);
 			layout.Children.Add(btnAdd3Add2);
 			layout.Children.Add(btnAddImage);
+			layout.Children.Add(btnAddSubmenus);
 			layout.Children.Add(btnAddChangeText);
 			layout.Children.Add(label);
 			return new ContentPage { Title = "Menus", Content = layout };
 		}
 
-		void AddMenu(int count, bool addMenuItems = false, int countMenuItems = 1, bool withImage = false)
+		void AddMenu(int count, bool addMenuItems = false, int countMenuItems = 1, bool withImage = false, Menu menuHolder = null, bool addSubMenu = false)
 		{
 			for (int i = 0; i < count; i++)
 			{
@@ -143,14 +167,23 @@ namespace Xamarin.Forms.Controls.Issues
 					for (int j = 0; j < countMenuItems; j++)
 					{
 						var item = new MenuItem { Text = $"hello menu item {i}.{j}" };
-						if(withImage)
+						if (withImage)
 						{
 							item.Icon = Icon = "bank.png";
 						}
 						menu.Items.Add(item);
 					}
 				}
-				Application.Current.MainMenu.Add(menu);
+				if(addSubMenu)
+				{
+					var submenu = new Forms.Menu { Text = $"submenu {i}" };
+					var item = new MenuItem { Text = $"submenu item {i}" };
+					submenu.Items.Add(item);
+					menu.Add(submenu);
+				}
+				if (menuHolder == null)
+					menuHolder = Application.Current.MainMenu;
+				menuHolder.Add(menu);
 			}
 		}
 
@@ -162,6 +195,7 @@ namespace Xamarin.Forms.Controls.Issues
 				testList.Add(new TestDesktop("Quit") { Command = () => { Application.Current.Quit(); } });
 				testList.Add(new TestDesktop("RightClick") { Command = async () => { await Navigation.PushAsync(RightClickSupportPage()); } });
 				testList.Add(new TestDesktop("Menus") { Command = async () => { await Navigation.PushAsync(MenusSupportPage()); } });
+				testList.Add(new TestDesktop("Context Menu") { Command = async () => { await Navigation.PushAsync(ContextMenuSupportPage()); } });
 
 				return testList;
 			}
