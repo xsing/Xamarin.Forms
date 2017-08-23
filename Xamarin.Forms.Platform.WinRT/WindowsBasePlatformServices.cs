@@ -142,5 +142,10 @@ namespace Xamarin.Forms.Platform.WinRT
 					timer.Stop();
 			};
 		}
+
+		public void QuitApp()
+		{
+			Log.Warning(nameof(WindowsBasePlatformServices), "Platform doesn't implement QuitApp");
+		}
 	}
 }
