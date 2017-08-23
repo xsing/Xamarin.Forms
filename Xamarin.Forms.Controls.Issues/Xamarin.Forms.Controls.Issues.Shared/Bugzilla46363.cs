@@ -17,6 +17,7 @@ namespace Xamarin.Forms.Controls.Issues
 		const string Target = "Two";
 		const string ContextAction = "Context Action";
 		const string TapSuccess = "Tap Success";
+		const string TapFailure = "TapFailure";
 		const string ContextSuccess = "Context Menu Success";
 		const string Testing = "Testing";
 
@@ -38,7 +39,15 @@ namespace Xamarin.Forms.Controls.Issues
 
 			s_tapCommand = new Command(() =>
 			{
-				result.Text = TapSuccess;
+				if (result.Text == TapSuccess || result.Text == TapFailure)
+				{
+					// We want this test to fail if the tap command is executed more than once
+					result.Text = TapFailure;
+				}
+				else
+				{
+					result.Text = TapSuccess;
+				}
 			});
 
 			s_contextCommand = new Command(() =>
