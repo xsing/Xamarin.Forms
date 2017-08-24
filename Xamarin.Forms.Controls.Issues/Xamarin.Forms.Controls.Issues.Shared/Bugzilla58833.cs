@@ -18,20 +18,23 @@ namespace Xamarin.Forms.Controls.Issues
 		{
 			Label label;
 
+			static int s_index;
+
 			public TestCell()
 			{
-				ContextActions.Add(new MenuItem { Text = "Action" });
 				label = new Label();
 
 				label.GestureRecognizers.Add(new TapGestureRecognizer
 				{
 					Command = new Command(() =>
 					{
-						Debug.WriteLine($">>>>> TestCell TestCell 30: TapGesture Fired");
+						Debug.WriteLine($">>>>> TapGesture Fired");
 					})
 				});
 
 				View = label;
+
+				ContextActions.Add(new MenuItem { Text = s_index++ + " Action" });
 			}
 
 			protected override void OnBindingContextChanged()
@@ -66,7 +69,6 @@ namespace Xamarin.Forms.Controls.Issues
 		void List_ItemSelected(object sender, SelectedItemChangedEventArgs e)
 		{
 			System.Diagnostics.Debug.WriteLine("**** CurrentItem Changed *****");
-			Debug.WriteLine($">>>>> Bugzilla58833 List_ItemSelected 60: {e.SelectedItem} Selected");
 		}
 
 #if UITEST

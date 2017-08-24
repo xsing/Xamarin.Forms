@@ -1,6 +1,4 @@
 using System;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using Android.Support.V4.View;
 using Android.Views;
@@ -19,12 +17,9 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
         readonly MotionEventHelper _motionEventHelper = new MotionEventHelper();
         InnerGestureListener _gestureListener;
 
-		bool _clickable;
 		bool _disposed;
 		bool _inputTransparent;
 	    bool _isEnabled;
-
-		NotifyCollectionChangedEventHandler _collectionChangeHandler;
 
 		VisualElement Element => _renderer?.Element;
 
@@ -81,14 +76,11 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		{
 			if (e.OldElement != null)
 			{
-				UnsubscribeGestureRecognizers(e.OldElement);
 				e.OldElement.PropertyChanged -= OnElementPropertyChanged;
 			}
 
 			if (e.NewElement != null)
 			{
-				UpdateGestureRecognizers(true);
-				SubscribeGestureRecognizers(e.NewElement);
                 _motionEventHelper.UpdateElement(e.NewElement);
                 e.NewElement.PropertyChanged += OnElementPropertyChanged;
 			}
@@ -130,11 +122,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 					_gestureListener = null;
 				}
 
-				if (_renderer?.Element != null)
-				{
-					UnsubscribeGestureRecognizers(Element);
-				}
-
 				_renderer = null;
 			}
 
@@ -172,76 +159,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			// if we check handled first, we might short-circuit and never check for tap/pan
 			handled = _gestureDetector.Value.OnTouchEvent(e) || handled;
 
-			v.EnsureLongClickCancellation(e, handled, Element);
-
 			return handled;
-		}
-
-		void HandleGestureRecognizerCollectionChanged(object sender,
-			NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
-		{
-			UpdateGestureRecognizers();
-		}
-
-		void SubscribeGestureRecognizers(VisualElement element)
-		{
-			var view = element as View;
-			if (view == null)
-			{
-				return;
-			}
-
-			if (_collectionChangeHandler == null)
-			{
-				_collectionChangeHandler = HandleGestureRecognizerCollectionChanged;
-			}
-
-			var observableCollection = (ObservableCollection<IGestureRecognizer>)view.GestureRecognizers;
-			if (observableCollection != null)
-			{
-				observableCollection.CollectionChanged += _collectionChangeHandler;
-			}
-		}
-
-		void UnsubscribeGestureRecognizers(VisualElement element)
-		{
-			var view = element as View;
-			if (view == null || _collectionChangeHandler == null)
-			{
-				return;
-			}
-
-			var observableCollection = (ObservableCollection<IGestureRecognizer>)view.GestureRecognizers;
-			if (observableCollection != null)
-			{
-				observableCollection.CollectionChanged -= _collectionChangeHandler;
-			}
-		}
-
-		void UpdateClickable(bool force = false)
-		{
-			var view = Element as View;
-			if (view == null)
-			{
-				return;
-			}
-
-			bool newValue = view.ShouldBeMadeClickable();
-			if (force || _clickable != newValue)
-			{
-				Control.Clickable = newValue;
-				_clickable = newValue;
-			}
-		}
-
-		void UpdateGestureRecognizers(bool forceClick = false)
-		{
-			if (Element == null)
-			{
-				return;
-			}
-
-			UpdateClickable(forceClick);
 		}
 
 		void UpdateInputTransparent()

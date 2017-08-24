@@ -26,7 +26,7 @@ namespace Xamarin.Forms.Controls.Issues
 
 		protected override void Init()
 		{
-			var list = new List<string> { "One", Target, "Two", "Three" };
+			var list = new List<string> { "One", Target, "Three", "Four" };
 
 			var lv = new ListView
 			{

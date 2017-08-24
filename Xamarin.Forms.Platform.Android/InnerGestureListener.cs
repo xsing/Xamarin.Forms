@@ -20,8 +20,10 @@ namespace Xamarin.Forms.Platform.Android
 		Func<int, bool> _tapDelegate;
 		Func<int, IEnumerable<TapGestureRecognizer>> _tapGestureRecognizers;
 
-		public InnerGestureListener(Func<int, bool> tapDelegate, Func<int, IEnumerable<TapGestureRecognizer>> tapGestureRecognizers, Func<float, float, int, bool> scrollDelegate,
-									Func<int, bool> scrollStartedDelegate, Func<bool> scrollCompleteDelegate)
+		public InnerGestureListener(Func<int, bool> tapDelegate, 
+			Func<int, IEnumerable<TapGestureRecognizer>> tapGestureRecognizers, 
+			Func<float, float, int, bool> scrollDelegate,
+			Func<int, bool> scrollStartedDelegate, Func<bool> scrollCompleteDelegate)
 		{
 			if (tapDelegate == null)
 				throw new ArgumentNullException(nameof(tapDelegate));
@@ -50,10 +52,11 @@ namespace Xamarin.Forms.Platform.Android
 
 		internal void OnTouchEvent(MotionEvent e)
 		{
+			// TODO hartez 2017/08/23 10:36:33 The FastRenderers GestureManager doesn't call this at all	
+			// - maybe it's not really necessary?
+
 			if (e.Action == MotionEventActions.Up)
 				EndScrolling();
-			else if (e.Action == MotionEventActions.Down)
-				SetStartingPosition(e);
 			else if (e.Action == MotionEventActions.Move)
 				StartScrolling(e);
 		}
@@ -71,22 +74,12 @@ namespace Xamarin.Forms.Platform.Android
 			return false;
 		}
 
-		bool GestureDetector.IOnDoubleTapListener.OnSingleTapConfirmed(MotionEvent e)
-		{
-			if (_disposed)
-				return false;
-
-			// optimization: only wait for a second tap if there is a double tap handler
-			if (!HasDoubleTapHandler())
-				return false;
-
-			return _tapDelegate(1);
-		}
-
 		bool GestureDetector.IOnGestureListener.OnDown(MotionEvent e)
 		{
 			SetStartingPosition(e);
-			return false;
+
+			// Need to return true for OnDown or the GestureDetector will ignore pretty much everything else
+			return true;
 		}
 
 		bool GestureDetector.IOnGestureListener.OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
@@ -119,10 +112,32 @@ namespace Xamarin.Forms.Platform.Android
 			if (_disposed)
 				return false;
 
-			// optimization: do not wait for a second tap if there is no double tap handler
 			if (HasDoubleTapHandler())
+			{
+				// Because we have a handler for double-tap, we need to wait for
+				// OnSingleTapConfirmed (to verify it's really just a single tap) before running the delegate
+				return false;
+			}
+
+			// A single tap has occurred and there's no handler for double tap to worry about,
+			// so we can go ahead and run the delegate
+			return _tapDelegate(1);
+		}
+
+		bool GestureDetector.IOnDoubleTapListener.OnSingleTapConfirmed(MotionEvent e)
+		{
+			if (_disposed)
 				return false;
 
+			if (!HasDoubleTapHandler())
+			{
+				// We're not worried about double-tap, so OnSingleTap has already run the delegate
+				// there's nothing for us to do here
+				return false;
+			}
+
+			// Since there was a double-tap handler, we had to wait for OnSingleTapConfirmed;
+			// Now that we're sure it's a single tap, we can run the delegate
 			return _tapDelegate(1);
 		}
 
