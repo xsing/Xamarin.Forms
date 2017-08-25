@@ -2,6 +2,7 @@
 using Xamarin.Forms.Internals;
 using System.Collections.Generic;
 using System.Diagnostics;
+
 #if UITEST
 using Xamarin.UITest;
 using NUnit.Framework;
@@ -13,6 +14,9 @@ namespace Xamarin.Forms.Controls.Issues
 	[Issue(IssueTracker.Bugzilla, 58833, "ListView SelectedItem Binding does not fire", PlatformAffected.Android)]
 	public class Bugzilla58833 : TestContentPage
 	{
+		const string Success = "ItemSelected Success";
+		Label label;
+
 		[Preserve(AllMembers = true)]
 		class TestCell : ViewCell
 		{
@@ -23,30 +27,27 @@ namespace Xamarin.Forms.Controls.Issues
 			public TestCell()
 			{
 				label = new Label();
-
-				label.GestureRecognizers.Add(new TapGestureRecognizer
-				{
-					Command = new Command(() =>
-					{
-						Debug.WriteLine($">>>>> TapGesture Fired");
-					})
-				});
-
+				//label.GestureRecognizers.Add(new TapGestureRecognizer
+				//{
+				//	Command = new Command(() =>
+				//	{
+				//		Debug.WriteLine($">>>>> TapGesture Fired");
+				//	})
+				//});
 				View = label;
-
 				ContextActions.Add(new MenuItem { Text = s_index++ + " Action" });
 			}
 
 			protected override void OnBindingContextChanged()
 			{
 				base.OnBindingContextChanged();
-
 				label.Text = (string)BindingContext;
 			}
 		}
 
 		protected override void Init()
 		{
+			label = new Label();
 			var items = new List<string>();
 			for (int i = 0; i < 5; i++)
 				items.Add($"Item #{i}");
@@ -61,6 +62,7 @@ namespace Xamarin.Forms.Controls.Issues
 			Content = new StackLayout
 			{
 				Children = {
+					label,
 					list
 				}
 			};
@@ -68,16 +70,16 @@ namespace Xamarin.Forms.Controls.Issues
 
 		void List_ItemSelected(object sender, SelectedItemChangedEventArgs e)
 		{
-			System.Diagnostics.Debug.WriteLine("**** CurrentItem Changed *****");
+			label.Text = Success;
 		}
 
 #if UITEST
 		[Test]
-		public void Issue1Test ()
+		public void Bugzilla58833Test()
 		{
-			RunningApp.Screenshot ("I am at Issue 1");
-			RunningApp.WaitForElement (q => q.Marked ("IssuePageLabel"));
-			RunningApp.Screenshot ("I see the Label");
+			RunningApp.WaitForElement(q => q.Marked($"Item #1"));
+			RunningApp.Tap(q => q.Marked($"Item #1"));
+			RunningApp.WaitForElement(q => q.Marked(Success));
 		}
 #endif
 	}
