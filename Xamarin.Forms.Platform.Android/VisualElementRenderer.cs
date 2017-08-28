@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using Android.Content;
 using Android.Support.V4.View;
 using Android.Views;
 using Xamarin.Forms.Internals;
@@ -32,7 +33,7 @@ namespace Xamarin.Forms.Platform.Android
 		PropertyChangedEventHandler _propertyChangeHandler;
 		Lazy<ScaleGestureDetector> _scaleDetector;
 
-		protected VisualElementRenderer() : base(Forms.Context)
+		protected VisualElementRenderer(Context context) : base(context)
 		{
 			_tapGestureHandler = new TapGestureHandler(() => View);
 			_panGestureHandler = new PanGestureHandler(() => View, Context.FromPixels);
@@ -48,6 +49,11 @@ namespace Xamarin.Forms.Platform.Android
 			_scaleDetector = new Lazy<ScaleGestureDetector>(
 					() => new ScaleGestureDetector(Context, new InnerScaleListener(_pinchGestureHandler.OnPinch, _pinchGestureHandler.OnPinchStarted, _pinchGestureHandler.OnPinchEnded))
 					);
+		}
+
+		[Obsolete("This constructor is obsolete as of version 3.0. Please use VisualElementRenderer(Context) instead.")]
+		protected VisualElementRenderer() : this(Forms.Context)
+		{
 		}
 
 		public TElement Element { get; private set; }

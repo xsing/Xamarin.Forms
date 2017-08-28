@@ -1,4 +1,6 @@
+using System;
 using System.ComponentModel;
+using Android.Content;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using AButton = Android.Widget.Button;
@@ -10,6 +12,16 @@ namespace Xamarin.Forms.Platform.Android
 	public class FrameRenderer : VisualElementRenderer<Frame>
 	{
 		bool _disposed;
+
+		public FrameRenderer(Context context) : base(context)
+		{
+		}
+
+		[Obsolete("This constructor is obsolete as of version 3.0. Please use FrameRenderer(Context) instead.")]
+		public FrameRenderer()
+		{
+			AutoPackage = false;
+		}
 
 		protected override void Dispose(bool disposing)
 		{

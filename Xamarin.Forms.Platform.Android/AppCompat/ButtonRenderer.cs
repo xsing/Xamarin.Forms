@@ -21,8 +21,16 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		bool _isDisposed;
 		int _imageHeight = -1;
 
-		public ButtonRenderer()
+		public ButtonRenderer(Context context) : base(context)
 		{
+			System.Diagnostics.Debug.WriteLine($">>>>> ButtonRenderer ButtonRenderer 26: Good Constructor");
+			AutoPackage = false;
+		}
+
+		[Obsolete("This constructor is obsolete as of version 3.0. Please use ButtonRenderer(Context) instead.")]
+		public ButtonRenderer() 
+		{
+			System.Diagnostics.Debug.WriteLine($">>>>> ButtonRenderer ButtonRenderer 32: Bad Constructor");
 			AutoPackage = false;
 		}
 

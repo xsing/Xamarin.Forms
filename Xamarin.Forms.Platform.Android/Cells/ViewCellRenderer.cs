@@ -36,7 +36,7 @@ namespace Xamarin.Forms.Platform.Android
 			if (cell.View == null)
 				throw new InvalidOperationException($"ViewCell must have a {nameof(cell.View)}");
 
-			IVisualElementRenderer view = Platform.CreateRenderer(cell.View);
+			IVisualElementRenderer view = Platform.CreateRenderer(cell.View, context);
 			Platform.SetRenderer(cell.View, view);
 			cell.View.IsPlatformEnabled = true;
 			var c = new ViewCellContainer(context, view, cell, ParentView, unevenRows, rowHeight);
@@ -131,7 +131,7 @@ namespace Xamarin.Forms.Platform.Android
 				_view.View.Dispose();
 
 				_viewCell = cell;
-				_view = Platform.CreateRenderer(_viewCell.View);
+				_view = Platform.CreateRenderer(_viewCell.View, Context);
 
 				Platform.SetRenderer(_viewCell.View, _view);
 				AddView(_view.View);

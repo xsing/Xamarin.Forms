@@ -297,11 +297,17 @@ namespace Xamarin.Forms.Platform.Android
 			throw new InvalidOperationException("RemovePage is not supported globally on Android, please use a NavigationPage.");
 		}
 
+		[Obsolete("Context is obsolete as of version 3.0. Please use CreateRenderer(VisualElement, Context) instead.")]
 		public static IVisualElementRenderer CreateRenderer(VisualElement element)
+		{
+			return CreateRenderer(element, Forms.Context);
+		}
+
+		public static IVisualElementRenderer CreateRenderer(VisualElement element, Context context)
 		{
 			UpdateGlobalContext(element);
 
-			IVisualElementRenderer renderer = Registrar.Registered.GetHandler<IVisualElementRenderer>(element.GetType()) ?? new DefaultRenderer();
+			IVisualElementRenderer renderer = Registrar.Registered.GetHandler<IVisualElementRenderer>(element.GetType(), context) ?? new DefaultRenderer(context);
 			renderer.SetElement(element);
 
 			return renderer;
@@ -335,11 +341,11 @@ namespace Xamarin.Forms.Platform.Android
 			base.OnBindingContextChanged();
 		}
 
-		internal static IVisualElementRenderer CreateRenderer(VisualElement element, FragmentManager fragmentManager)
+		internal static IVisualElementRenderer CreateRenderer(VisualElement element, FragmentManager fragmentManager, Context context)
 		{
 			UpdateGlobalContext(element);
 
-			IVisualElementRenderer renderer = Registrar.Registered.GetHandler<IVisualElementRenderer>(element.GetType()) ?? new DefaultRenderer();
+			IVisualElementRenderer renderer = Registrar.Registered.GetHandler<IVisualElementRenderer>(element.GetType(), context) ?? new DefaultRenderer(context);
 
 			var managesFragments = renderer as IManageFragments;
 			managesFragments?.SetFragmentManager(fragmentManager);
@@ -561,7 +567,7 @@ namespace Xamarin.Forms.Platform.Android
 				return;
 
 			SetPageContext(view, _context);
-			IVisualElementRenderer renderView = CreateRenderer(view);
+			IVisualElementRenderer renderView = CreateRenderer(view, _context);
 			SetRenderer(view, renderView);
 
 			if (layout)
@@ -793,7 +799,7 @@ namespace Xamarin.Forms.Platform.Android
 			if (modalRenderer == null)
 			{
 				SetPageContext(modal, _context);
-				modalRenderer = CreateRenderer(modal);
+				modalRenderer = CreateRenderer(modal, _context);
 				SetRenderer(modal, modalRenderer);
 
 				if (modal.BackgroundColor == Color.Default && modal.BackgroundImage == null)
@@ -1093,6 +1099,10 @@ namespace Xamarin.Forms.Platform.Android
 			}
 
 			readonly MotionEventHelper _motionEventHelper = new MotionEventHelper();
+
+			public DefaultRenderer(Context context) : base(context)
+			{
+			}
 
 			internal void NotifyFakeHandling()
 			{

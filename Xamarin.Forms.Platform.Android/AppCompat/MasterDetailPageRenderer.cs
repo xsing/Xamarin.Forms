@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Android.Content;
 using Android.Support.V4.Widget;
 using Android.Views;
 using Android.Support.V4.App;
@@ -26,6 +27,11 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		VisualElementTracker _tracker;
 		FragmentManager _fragmentManager;
 
+		public MasterDetailPageRenderer(Context context) : base(context)
+		{
+		}
+
+		[Obsolete("This constructor is obsolete as of version 3.0. Please use MasterDetailPageRenderer(Context) instead.")]
 		public MasterDetailPageRenderer() : base(Forms.Context)
 		{
 		}

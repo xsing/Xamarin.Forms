@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Android.App;
+using Android.Content;
 using Android.Support.V4.Widget;
 using Android.Views;
 using AView = Android.Views.View;
@@ -20,6 +21,11 @@ namespace Xamarin.Forms.Platform.Android
 		MasterDetailPage _page;
 		bool _presented;
 
+		public MasterDetailRenderer(Context context) : base(context)
+		{
+		}
+
+		[Obsolete("This constructor is obsolete as of version 3.0. Please use MasterDetailRenderer(Context) instead.")]
 		public MasterDetailRenderer() : base(Forms.Context)
 		{
 		}
