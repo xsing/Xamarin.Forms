@@ -77,6 +77,11 @@ namespace Embedding.Droid
 			
 			ft.Commit();
 		}
+
+		public void LaunchSecondActivity()
+		{
+			StartActivity(typeof(SecondActivity));
+		}
 	}
 
 	public class MainFragment : Fragment
@@ -87,10 +92,12 @@ namespace Embedding.Droid
 			var showEmbeddedButton = view.FindViewById<Button>(Resource.Id.showEmbeddedButton);
 			var showAlertsActionSheets = view.FindViewById<Button>(Resource.Id.showAlertsActionSheets);
 			var showWebView = view.FindViewById<Button>(Resource.Id.showWebView);
+			var launchSecondActivity = view.FindViewById<Button>(Resource.Id.launchSecondActivity);
 
 			showEmbeddedButton.Click += ShowEmbeddedClick;
 			showAlertsActionSheets.Click += ShowAlertsActionSheetsClick;
 			showWebView.Click += ShowWebViewOnClick;
+			launchSecondActivity.Click += LaunchSecondActivityOnClick;
 
 			return view;
 		}
@@ -98,6 +105,10 @@ namespace Embedding.Droid
 		void ShowWebViewOnClick(object sender, EventArgs eventArgs)
 		{
 			((MainActivity)Activity).ShowWebView();
+		}
+		void LaunchSecondActivityOnClick(object sender, EventArgs e)
+		{
+			((MainActivity)Activity).LaunchSecondActivity();
 		}
 
 		void ShowAlertsActionSheetsClick(object sender, EventArgs eventArgs)
