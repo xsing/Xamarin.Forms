@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-		<Compile Include="AlertsAndActionSheets.xaml.cs">
+    <Compile Include="AlertsAndActionSheets.xaml.cs">
       <DependentUpon>AlertsAndActionSheets.xaml</DependentUpon>
     </Compile>
     <Compile Include="Page3.xaml.cs">
@@ -53,24 +53,19 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-		<EmbeddedResource Include="AlertsAndActionSheets.xaml">
-   
+    <EmbeddedResource Include="AlertsAndActionSheets.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="WebViewExample.xaml">
-	   
-	    <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="Page3.xaml">
-   
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="Hello.xaml">
-     
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="Page4.xaml">
-      
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
@@ -87,12 +82,12 @@
       <Project>{9DB2F292-8034-4E06-89AD-98BBDA4306B9}</Project>
       <Name>Xamarin.Forms.Xaml</Name>
     </ProjectReference>
-		 <ProjectReference Include="..\Xamarin.Forms.Build.Tasks\Xamarin.Forms.Build.Tasks.csproj">
+    <ProjectReference Include="..\..\Xamarin.Forms.Build.Tasks\Xamarin.Forms.Build.Tasks.csproj">
       <Project>{96D89208-4EB9-4451-BE73-8A9DF3D9D7B7}</Project>
       <Name>Xamarin.Forms.Build.Tasks</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-	 <Import Project="..\..\.nuspec\Xamarin.Forms.targets" />
+  <Import Project="..\..\.nuspec\Xamarin.Forms.targets" />
 </Project>

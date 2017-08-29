@@ -20,6 +20,7 @@ namespace Embedding.Droid
 	{
 		Fragment _hello;
 		Fragment _alertsAndActionSheets;
+		Fragment _webview;
 
 		protected override void OnCreate(Bundle bundle)
 		{
@@ -44,6 +45,17 @@ namespace Embedding.Droid
 			}
 
 			ShowEmbeddedPageFragment(_hello);
+		}
+
+		public void ShowWebView()
+		{
+			// Create a XF Hello page as a fragment
+			if (_webview == null)
+			{
+				_webview= new WebViewExample().CreateSupportFragment(this);
+			}
+
+			ShowEmbeddedPageFragment(_webview);
 		}
 
 		public void ShowAlertsAndActionSheets()
@@ -74,11 +86,18 @@ namespace Embedding.Droid
 			var view =  inflater.Inflate(Resource.Layout.MainFragment, container, false);
 			var showEmbeddedButton = view.FindViewById<Button>(Resource.Id.showEmbeddedButton);
 			var showAlertsActionSheets = view.FindViewById<Button>(Resource.Id.showAlertsActionSheets);
+			var showWebView = view.FindViewById<Button>(Resource.Id.showWebView);
 
 			showEmbeddedButton.Click += ShowEmbeddedClick;
 			showAlertsActionSheets.Click += ShowAlertsActionSheetsClick;
+			showWebView.Click += ShowWebViewOnClick;
 
 			return view;
+		}
+
+		void ShowWebViewOnClick(object sender, EventArgs eventArgs)
+		{
+			((MainActivity)Activity).ShowWebView();
 		}
 
 		void ShowAlertsActionSheetsClick(object sender, EventArgs eventArgs)

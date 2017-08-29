@@ -31,4 +31,13 @@
     android:layout_marginLeft="10dp"
     android:width="165dp" />
 
+  <Button
+    android:text="Show Web View"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/showWebView"
+    android:textColor="@android:color/white"
+    android:layout_marginLeft="10dp"
+    android:width="165dp" />
+
 </LinearLayout>
