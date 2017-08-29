@@ -16,6 +16,7 @@ namespace Embedding.iOS
 
 		UIViewController _hello;
 		UIViewController _alertsAndActionSheets;
+		UIViewController _webview;
 
 		UIBarButtonItem _helloButton;
 		UIBarButtonItem _alertsAndActionSheetsButton;
@@ -97,6 +98,16 @@ namespace Embedding.iOS
 
 			// And push it onto the navigation stack
 			_navigation.PushViewController(_alertsAndActionSheets, true);
+		}
+
+		public void ShowWebView()
+		{
+			if (_webview == null)
+			{
+				_webview = new WebViewExample().CreateViewController();
+			}
+
+			_navigation.PushViewController(_webview, true);
 		}
 	}
 }
