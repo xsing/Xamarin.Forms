@@ -8,6 +8,8 @@ namespace Xamarin.Forms.Platform.Android
 {
 	public static class ContextExtensions
 	{
+		// TODO hartez 2017/08/28 18:06:34 This *might* be an issue, since it'll always have the display density of the first context it's run against	
+		// But that would really only be an issue if two Activities could have different densities
 		static float s_displayDensity = float.MinValue;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
