@@ -78,8 +78,14 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			SetStartingPosition(e);
 
-			// Need to return true for OnDown or the GestureDetector will ignore pretty much everything else
-			return true;
+			// TODO hartez This is suuuuuper inefficent; there's got to be a better way
+			if (_tapGestureRecognizers(1).Any() || _tapGestureRecognizers(2).Any())
+			{
+				// Need to return true for OnDown or the GestureDetector will ignore pretty much everything else
+				return true;
+			}
+
+			return false;
 		}
 
 		bool GestureDetector.IOnGestureListener.OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
