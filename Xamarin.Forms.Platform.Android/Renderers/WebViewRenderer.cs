@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using Android.App;
 using Android.Webkit;
 using Android.Widget;
 using Xamarin.Forms.Internals;
@@ -76,7 +77,7 @@ namespace Xamarin.Forms.Platform.Android
 				webView.SetWebViewClient(new WebClient(this));
 
 				_webChromeClient = GetFormsWebChromeClient();
-				_webChromeClient.SetContext(Context as IStartActivityForResult);
+				_webChromeClient.SetContext(Context as Activity);
 				webView.SetWebChromeClient(_webChromeClient);
 
 				webView.Settings.JavaScriptEnabled = true;

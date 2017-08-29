@@ -13,11 +13,9 @@ using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms.Platform.Android
 {
-	public class FormsApplicationActivity : Activity, IDeviceInfoProvider, IStartActivityForResult
+	public class FormsApplicationActivity : Activity, IDeviceInfoProvider
 	{
 		public delegate bool BackButtonPressedEventHandler(object sender, EventArgs e);
-
-		readonly ConcurrentDictionary<int, Action<Result, Intent>> _activityResultCallbacks = new ConcurrentDictionary<int, Action<Result, Intent>>();
 
 		Application _application;
 		Platform _canvas;
@@ -25,8 +23,6 @@ namespace Xamarin.Forms.Platform.Android
 		LinearLayout _layout;
 
 		readonly PopupRequestHelper _popupRequestHelper;
-
-		int _nextActivityResultCallbackKey;
 
 		AndroidApplicationLifecycleState _previousState;
 
@@ -38,27 +34,6 @@ namespace Xamarin.Forms.Platform.Android
 		}
 
 		public event EventHandler ConfigurationChanged;
-
-		int IStartActivityForResult.RegisterActivityResultCallback(Action<Result, Intent> callback)
-		{
-			int requestCode = _nextActivityResultCallbackKey;
-
-			while (!_activityResultCallbacks.TryAdd(requestCode, callback))
-			{
-				_nextActivityResultCallbackKey += 1;
-				requestCode = _nextActivityResultCallbackKey;
-			}
-
-			_nextActivityResultCallbackKey += 1;
-
-			return requestCode;
-		}
-
-		void IStartActivityForResult.UnregisterActivityResultCallback(int requestCode)
-		{
-			Action<Result, Intent> callback;
-			_activityResultCallbacks.TryRemove(requestCode, out callback);
-		}
 
 		public static event BackButtonPressedEventHandler BackPressed;
 
@@ -121,11 +96,7 @@ namespace Xamarin.Forms.Platform.Android
 		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
 		{
 			base.OnActivityResult(requestCode, resultCode, data);
-
-			Action<Result, Intent> callback;
-
-			if (_activityResultCallbacks.TryGetValue(requestCode, out callback))
-				callback(resultCode, data);
+			ActivityResultCallbackRegistry.InvokeCallback(requestCode, resultCode, data);
 		}
 
 		protected override void OnCreate(Bundle savedInstanceState)
