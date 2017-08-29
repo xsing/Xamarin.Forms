@@ -11,15 +11,15 @@ namespace Embedding.XF
 		{
 			InitializeComponent();
 
-			var htmlSource = new HtmlWebViewSource ();
+			var htmlSource = new HtmlWebViewSource();
 
 			htmlSource.Html = @"<html><body>
 <h1>Xamarin.Forms</h1>
 <p>Welcome to WebView.</p>
 </body>
 </html>";
-			
 			wv.Source = htmlSource;
 		}
 	}
 }
+
