@@ -50,9 +50,12 @@ namespace Xamarin.Forms.Controls
 			long stop = Stopwatch.GetTimestamp();
 
 			Statistic stats = GetStat(id);
-			long start = stats.StartTimes.Pop();
+
 			if (!stats.StartTimes.Any())
-				stats.TotalTime += stop - start;
+				return;
+
+			long start = stats.StartTimes.Pop();
+			stats.TotalTime += stop - start;
 		}
 
 		public void DumpStats()
