@@ -31,7 +31,8 @@ namespace Xamarin.Forms
 
 		static bool? s_isLollipopOrNewer;
 
-		[Obsolete("Context is obsolete as of version 3.0. Please use a local context instead.")]
+		// TODO hartez 2017/08/28 18:26:25 Turn this obsolete back on	
+		//[Obsolete("Context is obsolete as of version 3.0. Please use a local context instead.")]
 		public static Context Context { get; internal set; }
 
 		public static bool IsInitialized { get; private set; }

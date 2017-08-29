@@ -31,6 +31,16 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 		public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
 
+		public ButtonRenderer(Context context) : base(context)
+		{
+			_automationPropertiesProvider = new AutomationPropertiesProvider(this);
+			_effectControlProvider = new EffectControlProvider(this);
+			_textColorSwitcher = new Lazy<TextColorSwitcher>(() => new TextColorSwitcher(TextColors));
+
+			Initialize();
+		}
+
+		[Obsolete("This constructor is obsolete as of version 3.0. Please use ButtonRenderer(Context) instead.")]
 		public ButtonRenderer() : base(Forms.Context)
 		{
 			_automationPropertiesProvider = new AutomationPropertiesProvider(this);

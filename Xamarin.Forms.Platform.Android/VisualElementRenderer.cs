@@ -47,7 +47,9 @@ namespace Xamarin.Forms.Platform.Android
 						new InnerGestureListener(_tapGestureHandler.OnTap, _tapGestureHandler.TapGestureRecognizers, _panGestureHandler.OnPan, _panGestureHandler.OnPanStarted, _panGestureHandler.OnPanComplete)));
 
 			_scaleDetector = new Lazy<ScaleGestureDetector>(
-					() => new ScaleGestureDetector(Context, new InnerScaleListener(_pinchGestureHandler.OnPinch, _pinchGestureHandler.OnPinchStarted, _pinchGestureHandler.OnPinchEnded))
+					() => new ScaleGestureDetector(Context, 
+					new InnerScaleListener(_pinchGestureHandler.OnPinch, _pinchGestureHandler.OnPinchStarted, 
+					_pinchGestureHandler.OnPinchEnded, Context.FromPixels))
 					);
 		}
 
