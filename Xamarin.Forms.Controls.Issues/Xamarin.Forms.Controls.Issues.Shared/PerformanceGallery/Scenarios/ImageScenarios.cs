@@ -8,7 +8,7 @@ namespace Xamarin.Forms.Controls.GalleryPages.PerformanceGallery.Scenarios
 	internal class ImageScenario1 : PerformanceScenario
 	{
 		public ImageScenario1()
-		: base("Embedded image", 200)
+		: base("Embedded image")
 		{
 			View = new Image { Source = "coffee.png" };
 		}

@@ -8,13 +8,11 @@ namespace Xamarin.Forms.Controls
 	{
 		public View View { get; set; }
 		public string Name { get; private set; }
-		public double ExpectedRenderTime { get; private set; }
 
 		public PerformanceScenario() { }
-		public PerformanceScenario(string name, double renderTime)
+		public PerformanceScenario(string name)
 		{
 			Name = name;
-			ExpectedRenderTime = renderTime;
 		}
 	}
 }
