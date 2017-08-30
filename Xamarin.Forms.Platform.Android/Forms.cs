@@ -110,7 +110,7 @@ namespace Xamarin.Forms
 
 			ResourceManager.Init(resourceAssembly);
 
-			Color.SetAccent(GetAccentColor());
+			Color.SetAccent(GetAccentColor(activity));
 
 			if (!IsInitialized)
 				Internals.Log.Listeners.Add(new DelegateLogListener((c, m) => Trace.WriteLine(m, c)));
@@ -159,16 +159,16 @@ namespace Xamarin.Forms
 			s_flags = flags.ToList().AsReadOnly();
 		}
 
-		static Color GetAccentColor()
+		static Color GetAccentColor(Context context)
 		{
 			Color rc;
 			using (var value = new TypedValue())
 			{
-				if (Context.Theme.ResolveAttribute(global::Android.Resource.Attribute.ColorAccent, value, true) && Forms.IsLollipopOrNewer)	// Android 5.0+
+				if (context.Theme.ResolveAttribute(global::Android.Resource.Attribute.ColorAccent, value, true) && Forms.IsLollipopOrNewer)	// Android 5.0+
 				{
 					rc = Color.FromUint((uint)value.Data);
 				}
-				else if(Context.Theme.ResolveAttribute(Context.Resources.GetIdentifier("colorAccent", "attr", Context.PackageName), value, true))	// < Android 5.0
+				else if(context.Theme.ResolveAttribute(context.Resources.GetIdentifier("colorAccent", "attr", context.PackageName), value, true))	// < Android 5.0
 				{
 					rc = Color.FromUint((uint)value.Data);
 				}
