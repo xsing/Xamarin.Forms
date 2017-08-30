@@ -939,7 +939,12 @@ namespace Xamarin.Forms.Platform.Android
 
 		bool ShouldShowActionBarTitleArea()
 		{
-			if (Forms.TitleBarVisibility == AndroidTitleBarVisibility.Never)
+			var activity = _context as Activity;
+
+			if (activity == null)
+				return false;
+
+			if (activity.Window.Attributes.Flags.HasFlag(WindowManagerFlags.Fullscreen))
 				return false;
 
 			bool hasMasterDetailPage = CurrentMasterDetailPage != null;

@@ -356,26 +356,6 @@ namespace Xamarin.Forms.Platform.Android
 			Window.SetSoftInputMode(adjust);
 		}
 
-		public override void OnWindowAttributesChanged(WindowManagerLayoutParams @params)
-		{
-			base.OnWindowAttributesChanged(@params);
-
-			if (Xamarin.Forms.Application.Current == null || Xamarin.Forms.Application.Current.MainPage == null)
-				return;
-
-			// sync between Window flag and Forms property
-			if (@params.Flags.HasFlag(WindowManagerFlags.Fullscreen))
-			{
-				if (Forms.TitleBarVisibility != AndroidTitleBarVisibility.Never)
-					Forms.TitleBarVisibility = AndroidTitleBarVisibility.Never;
-			}
-			else
-			{
-				if (Forms.TitleBarVisibility != AndroidTitleBarVisibility.Default)
-					Forms.TitleBarVisibility = AndroidTitleBarVisibility.Default;
-			}
-		}
-
 		internal class DefaultApplication : Application
 		{
 		}

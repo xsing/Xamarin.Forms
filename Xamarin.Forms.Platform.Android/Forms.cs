@@ -45,8 +45,6 @@ namespace Xamarin.Forms
 			}
 		}
 
-		internal static AndroidTitleBarVisibility TitleBarVisibility { get; set; }
-
 		// Provide backwards compat for Forms.Init and AndroidActivity
 		// Why is bundle a param if never used?
 		public static void Init(Context activity, Bundle bundle)
@@ -64,14 +62,14 @@ namespace Xamarin.Forms
 		/// Sets title bar visibility programmatically. Must be called after Xamarin.Forms.Forms.Init() method
 		/// </summary>
 		/// <param name="visibility">Title bar visibility enum</param>
+		[Obsolete("SetTitleBarVisibility(AndroidTitleBarVisibility) is obsolete as of version 3.0. " 
+			+ "Please use SetTitleBarVisibility(Activity, AndroidTitleBarVisibility) instead.")]
 		public static void SetTitleBarVisibility(AndroidTitleBarVisibility visibility)
 		{
 			if((Activity)Context == null)
 				throw new NullReferenceException("Must be called after Xamarin.Forms.Forms.Init() method");
 
-			TitleBarVisibility = visibility;
-
-			if (TitleBarVisibility == AndroidTitleBarVisibility.Never)
+			if (visibility == AndroidTitleBarVisibility.Never)
 			{
 				if (!((Activity)Context).Window.Attributes.Flags.HasFlag(WindowManagerFlags.Fullscreen))
 					((Activity)Context).Window.AddFlags(WindowManagerFlags.Fullscreen);
@@ -80,6 +78,20 @@ namespace Xamarin.Forms
 			{
 				if (((Activity)Context).Window.Attributes.Flags.HasFlag(WindowManagerFlags.Fullscreen))
 					((Activity)Context).Window.ClearFlags(WindowManagerFlags.Fullscreen);
+			}
+		}
+
+		public static void SetTitleBarVisibility(Activity activity, AndroidTitleBarVisibility visibility)
+		{
+			if (visibility == AndroidTitleBarVisibility.Never)
+			{
+				if (!activity.Window.Attributes.Flags.HasFlag(WindowManagerFlags.Fullscreen))
+					activity.Window.AddFlags(WindowManagerFlags.Fullscreen);
+			}
+			else
+			{
+				if (activity.Window.Attributes.Flags.HasFlag(WindowManagerFlags.Fullscreen))
+					activity.Window.ClearFlags(WindowManagerFlags.Fullscreen);
 			}
 		}
 
