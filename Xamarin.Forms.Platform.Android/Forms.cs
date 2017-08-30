@@ -27,8 +27,6 @@ namespace Xamarin.Forms
 	{
 		const int TabletCrossover = 600;
 
-		static bool? s_supportsProgress;
-
 		static bool? s_isLollipopOrNewer;
 
 		// TODO hartez 2017/08/28 18:26:25 Turn this obsolete back on	
@@ -44,23 +42,6 @@ namespace Xamarin.Forms
 				if (!s_isLollipopOrNewer.HasValue)
 					s_isLollipopOrNewer = (int)Build.VERSION.SdkInt >= 21;
 				return s_isLollipopOrNewer.Value;
-			}
-		}
-
-		internal static bool SupportsProgress
-		{
-			get
-			{
-				var activity = Context as Activity;
-				if (!s_supportsProgress.HasValue)
-				{
-					int progressCircularId = Context.Resources.GetIdentifier("progress_circular", "id", "android");
-					if (progressCircularId > 0 && activity != null)
-						s_supportsProgress = activity.FindViewById(progressCircularId) != null;
-					else
-						s_supportsProgress = true;
-				}
-				return s_supportsProgress.Value;
 			}
 		}
 

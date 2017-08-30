@@ -10,6 +10,7 @@ namespace Xamarin.Forms.Platform.Android
 	{
 		readonly Context _context;
 		int _busyCount;
+		bool? _supportsProgress;
 
 		public PopupRequestHelper(Context context)
 		{
@@ -33,6 +34,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		void OnPageBusy(Page sender, bool enabled)
 		{
+			// TODO hartez 2017/08/30 10:33:04 Verify that the page sending this request is part of this context	
 			_busyCount = Math.Max(0, enabled ? _busyCount + 1 : _busyCount - 1);
 
 			UpdateProgressBarVisibility(_busyCount > 0);
@@ -40,6 +42,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		void OnActionSheetRequested(Page sender, ActionSheetArguments arguments)
 		{
+			// TODO hartez 2017/08/30 10:33:04 Verify that the page sending this request is part of this context	
 			var builder = new AlertDialog.Builder(_context);
 			builder.SetTitle(arguments.Title);
 			string[] items = arguments.Buttons.ToArray();
@@ -62,6 +65,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		void OnAlertRequested(Page sender, AlertArguments arguments)
 		{
+			// TODO hartez 2017/08/30 10:33:04 Verify that the page sending this request is part of this context	
 			AlertDialog alert = new AlertDialog.Builder(_context).Create();
 			alert.SetTitle(arguments.Title);
 			alert.SetMessage(arguments.Message);
@@ -74,7 +78,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		void UpdateProgressBarVisibility(bool isBusy)
 		{
-			if (!Forms.SupportsProgress)
+			if (!SupportsProgress)
 				return;
 #pragma warning disable 612, 618
 
@@ -90,6 +94,25 @@ namespace Xamarin.Forms.Platform.Android
 			activity.SetProgressBarIndeterminate(true);
 			activity.SetProgressBarIndeterminateVisibility(isBusy);
 #pragma warning restore 612, 618
+		}
+
+		internal bool SupportsProgress
+		{
+			get
+			{
+				if (_supportsProgress.HasValue)
+				{
+					return _supportsProgress.Value;
+				}
+
+				var activity = _context as Activity;
+				int progressCircularId = _context.Resources.GetIdentifier("progress_circular", "id", "android");
+				if (progressCircularId > 0 && activity != null)
+					_supportsProgress = activity.FindViewById(progressCircularId) != null;
+				else
+					_supportsProgress = true;
+				return _supportsProgress.Value;
+			}
 		}
 	}
 }
