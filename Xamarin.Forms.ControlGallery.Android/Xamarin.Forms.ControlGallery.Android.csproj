@@ -180,6 +180,7 @@
     <Compile Include="DisposeLabelRenderer.cs" />
     <Compile Include="DisposePageRenderer.cs" />
     <Compile Include="FormsAppCompatActivity.cs" />
+    <Compile Include="PerformanceTrackerRenderer.cs" />
     <Compile Include="PreApplicationClassActivity.cs" />
     <Compile Include="Properties\MapsKey.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

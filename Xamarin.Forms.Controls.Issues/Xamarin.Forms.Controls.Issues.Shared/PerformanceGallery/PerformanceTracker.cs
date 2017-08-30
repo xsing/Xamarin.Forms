@@ -5,6 +5,8 @@ namespace Xamarin.Forms.Controls
 	[Preserve(AllMembers = true)]
 	internal class PerformanceTracker : ContentView
 	{
+		public const string RenderCompleteMessage = "RenderComplete";
+
 		public static readonly BindableProperty RenderTimeProperty = BindableProperty.Create(nameof(RenderTime), typeof(float), typeof(PerformanceTracker), 0f);
 		public float RenderTime
 		{
@@ -32,6 +34,7 @@ namespace Xamarin.Forms.Controls
 			get { return (string)GetValue(OutcomeProperty); }
 			set { SetValue(OutcomeProperty, value); }
 		}
+		public long TotalMilliseconds { get; set; }
 
 		public PerformanceTracker()
 		{
