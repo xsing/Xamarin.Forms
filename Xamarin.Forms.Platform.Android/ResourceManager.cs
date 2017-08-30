@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Android.Content;
 using Android.Content.Res;
 using Android.Graphics;
 using Android.Graphics.Drawables;
@@ -17,15 +18,15 @@ namespace Xamarin.Forms.Platform.Android
 
 		public static Type ResourceClass { get; set; }
 
-		internal static Drawable GetFormsDrawable(this Resources resource, FileImageSource fileImageSource)
+		internal static Drawable GetFormsDrawable(this Context context, FileImageSource fileImageSource)
 		{
 			var file = fileImageSource.File;
-			Drawable drawable = resource.GetDrawable(fileImageSource);
+			Drawable drawable = context.GetDrawable(fileImageSource);
 			if(drawable == null)
 			{
-				var bitmap = GetBitmap(resource, file) ?? BitmapFactory.DecodeFile(file);
+				var bitmap = GetBitmap(context.Resources, file) ?? BitmapFactory.DecodeFile(file);
 				if (bitmap != null)
-					drawable = new BitmapDrawable(resource, bitmap);
+					drawable = new BitmapDrawable(context.Resources, bitmap);
 			}
 			return drawable;
 		}
@@ -51,6 +52,8 @@ namespace Xamarin.Forms.Platform.Android
 			return BitmapFactory.DecodeResourceAsync(resource, IdFromTitle(name, DrawableClass));
 		}
 
+		[Obsolete("GetDrawable(this Resources, string) is obsolete as of version 3.0. " 
+			+ "Please use GetDrawable(this Context, string) instead.")]
 		public static Drawable GetDrawable(this Resources resource, string name)
 		{
 			int id = IdFromTitle(name, DrawableClass);
@@ -59,7 +62,20 @@ namespace Xamarin.Forms.Platform.Android
 				Log.Warning("Could not load image named: {0}", name);
 				return null;
 			}
+
 			return ContextCompat.GetDrawable(Forms.Context, id);
+		}
+
+		public static Drawable GetDrawable(this Context context, string name)
+		{
+			int id = IdFromTitle(name, DrawableClass);
+			if (id == 0)
+			{
+				Log.Warning("Could not load image named: {0}", name);
+				return null;
+			}
+
+			return ContextCompat.GetDrawable(context, id);
 		}
 
 		public static int GetDrawableByName(string name)

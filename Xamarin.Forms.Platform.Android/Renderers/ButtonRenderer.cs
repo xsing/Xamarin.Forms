@@ -161,7 +161,7 @@ namespace Xamarin.Forms.Platform.Android
 				return;
 			}
 
-			var image = Context.Resources.GetDrawable(imageFile);
+			var image = Context.GetDrawable(imageFile);
 
 			if (IsNullOrEmpty(Element.Text))
 			{

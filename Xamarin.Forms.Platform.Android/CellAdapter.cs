@@ -197,7 +197,7 @@ namespace Xamarin.Forms.Platform.Android
 				var icon = action.Icon;
 				if (icon != null)
 				{
-					Drawable iconDrawable = _context.Resources.GetFormsDrawable(icon);
+					Drawable iconDrawable = _context.GetFormsDrawable(icon);
 					if (iconDrawable != null)
 						item.SetIcon(iconDrawable);
 				}

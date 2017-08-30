@@ -344,7 +344,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				return;
 			}
 
-			Drawable image = Context.Resources.GetDrawable(imageFile);
+			Drawable image = Context.GetDrawable(imageFile);
 
 			if (IsNullOrEmpty(Button.Text))
 			{
