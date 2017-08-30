@@ -6,9 +6,9 @@ namespace Xamarin.Forms.Internals
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public interface IPerformanceProvider
 	{
-		void Stop(string tag, string path, string member);
+		void Stop(string reference, string tag, string path, string member);
 
-		void Start(string tag, string path, string member);
+		void Start(string reference, string tag, string path, string member);
 	}
 
 	[EditorBrowsable(EditorBrowsableState.Never)]
@@ -21,14 +21,14 @@ namespace Xamarin.Forms.Internals
 			Provider = instance;
 		}
 
-		public static void Start(string tag = null, [CallerFilePath] string path = null, [CallerMemberName] string member = null)
+		public static void Start(string reference, string tag = null, [CallerFilePath] string path = null, [CallerMemberName] string member = null)
 		{
-			Provider?.Start(tag, path, member);
+			Provider?.Start(reference, tag, path, member);
 		}
 
-		public static void Stop(string tag = null, [CallerFilePath] string path = null, [CallerMemberName] string member = null)
+		public static void Stop(string reference, string tag = null, [CallerFilePath] string path = null, [CallerMemberName] string member = null)
 		{
-			Provider?.Stop(tag, path, member);
+			Provider?.Stop(reference, tag, path, member);
 		}
 	}
 }

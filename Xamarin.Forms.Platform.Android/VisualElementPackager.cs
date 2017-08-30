@@ -72,7 +72,8 @@ namespace Xamarin.Forms.Platform.Android
 
 		void AddChild(VisualElement view, IVisualElementRenderer oldRenderer = null, RendererPool pool = null, bool sameChildren = false)
 		{
-			Performance.Start();
+			var reference = Guid.NewGuid().ToString();
+			Performance.Start(reference);
 
 			if (_childViews == null)
 				_childViews = new List<IVisualElementRenderer>();
@@ -82,9 +83,9 @@ namespace Xamarin.Forms.Platform.Android
 				renderer = pool.GetFreeRenderer(view);
 			if (renderer == null)
 			{
-				Performance.Start("New renderer");
+				Performance.Start(reference, "New renderer");
 				renderer = Platform.CreateRenderer(view);
-				Performance.Stop("New renderer");
+				Performance.Stop(reference, "New renderer");
 			}
 
 			if (renderer == oldRenderer)
@@ -93,19 +94,19 @@ namespace Xamarin.Forms.Platform.Android
 				renderer.SetElement(view);
 			}
 
-			Performance.Start("Set renderer");
+			Performance.Start(reference, "Set renderer");
 			Platform.SetRenderer(view, renderer);
-			Performance.Stop("Set renderer");
+			Performance.Stop(reference, "Set renderer");
 
-			Performance.Start("Add view");
+			Performance.Start(reference, "Add view");
 			if (!sameChildren)
 			{
 				(_renderer.View as ViewGroup)?.AddView(renderer.View);
 				_childViews.Add(renderer);
 			}
-			Performance.Stop("Add view");
+			Performance.Stop(reference, "Add view");
 
-			Performance.Stop();
+			Performance.Stop(reference);
 		}
 
 		void EnsureChildOrder()
@@ -135,12 +136,13 @@ namespace Xamarin.Forms.Platform.Android
 
 		void OnChildRemoved(object sender, ElementEventArgs e)
 		{
-			Performance.Start();
+			var reference = Guid.NewGuid().ToString();
+			Performance.Start(reference);
 			var view = e.Element as VisualElement;
 			if (view != null)
 				RemoveChild(view);
 
-			Performance.Stop();
+			Performance.Stop(reference);
 		}
 
 		void OnChildrenReordered(object sender, EventArgs e)
@@ -158,7 +160,8 @@ namespace Xamarin.Forms.Platform.Android
 
 		void SetElement(VisualElement oldElement, VisualElement newElement)
 		{
-			Performance.Start();
+			var reference = Guid.NewGuid().ToString();
+			Performance.Start(reference);
 
 			var sameChildrenTypes = false;
 
@@ -203,7 +206,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			if (newElement != null)
 			{
-				Performance.Start("Setup");
+				Performance.Start(reference, "Setup");
 				newElement.ChildAdded += _childAddedHandler;
 				newElement.ChildRemoved += _childRemovedHandler;
 
@@ -225,10 +228,10 @@ namespace Xamarin.Forms.Platform.Android
 				//	throw new InvalidOperationException ("SetElement did not create the correct number of children");
 #endif
 				EnsureChildOrder();
-				Performance.Stop("Setup");
+				Performance.Stop(reference, "Setup");
 			}
 
-			Performance.Stop();
+			Performance.Stop(reference);
 		}
 	}
 }

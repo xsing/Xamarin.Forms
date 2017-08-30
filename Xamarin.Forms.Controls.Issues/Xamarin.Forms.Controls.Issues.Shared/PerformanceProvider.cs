@@ -13,7 +13,7 @@ namespace Xamarin.Forms.Controls
 	{
 		internal class Statistic
 		{
-			public readonly Stack<long> StartTimes = new Stack<long>();
+			public readonly List<Tuple<string, long>> StartTimes = new List<Tuple<string, long>>();
 			public int CallCount;
 			public long TotalTime;
 			public bool IsDetail;
@@ -31,7 +31,7 @@ namespace Xamarin.Forms.Controls
 			Statistics.Clear();
 		}
 
-		public void Start(string tag = null, [CallerFilePath] string path = null, [CallerMemberName] string member = null)
+		public void Start(string reference, string tag = null, [CallerFilePath] string path = null, [CallerMemberName] string member = null)
 		{
 			string id = GetId(tag, path, member);
 
@@ -41,10 +41,10 @@ namespace Xamarin.Forms.Controls
 				stats.IsDetail = true;
 
 			stats.CallCount++;
-			stats.StartTimes.Push(Stopwatch.GetTimestamp());
+			stats.StartTimes.Add(new Tuple<string, long>(reference, Stopwatch.GetTimestamp()));
 		}
 
-		public void Stop(string tag = null, [CallerFilePath] string path = null, [CallerMemberName] string member = null)
+		public void Stop(string reference, string tag = null, [CallerFilePath] string path = null, [CallerMemberName] string member = null)
 		{
 			string id = GetId(tag, path, member);
 			long stop = Stopwatch.GetTimestamp();
@@ -54,7 +54,7 @@ namespace Xamarin.Forms.Controls
 			if (!stats.StartTimes.Any())
 				return;
 
-			long start = stats.StartTimes.Pop();
+			long start = stats.StartTimes.Single(s => s.Item1 == reference).Item2;
 			stats.TotalTime += stop - start;
 		}
 
