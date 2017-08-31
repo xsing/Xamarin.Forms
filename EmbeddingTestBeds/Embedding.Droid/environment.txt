@@ -1,1 +1,1 @@
-﻿MONO_LOG_LEVEL=info
+﻿MONO_LOG_LEVEL=message
