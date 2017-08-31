@@ -34,7 +34,12 @@ namespace Xamarin.Forms.Platform.Android
 
 		void OnPageBusy(Page sender, bool enabled)
 		{
-			// TODO hartez 2017/08/30 10:33:04 Verify that the page sending this request is part of this context	
+			// Verify that the page making the request is part of this activity 
+			if (!PageIsInThisContext(sender))
+			{
+				return;
+			}
+				
 			_busyCount = Math.Max(0, enabled ? _busyCount + 1 : _busyCount - 1);
 
 			UpdateProgressBarVisibility(_busyCount > 0);
@@ -42,7 +47,12 @@ namespace Xamarin.Forms.Platform.Android
 
 		void OnActionSheetRequested(Page sender, ActionSheetArguments arguments)
 		{
-			// TODO hartez 2017/08/30 10:33:04 Verify that the page sending this request is part of this context	
+			// Verify that the page making the request is part of this activity 
+			if (!PageIsInThisContext(sender))
+			{
+				return;
+			}
+
 			var builder = new AlertDialog.Builder(_context);
 			builder.SetTitle(arguments.Title);
 			string[] items = arguments.Buttons.ToArray();
@@ -65,7 +75,12 @@ namespace Xamarin.Forms.Platform.Android
 
 		void OnAlertRequested(Page sender, AlertArguments arguments)
 		{
-			// TODO hartez 2017/08/30 10:33:04 Verify that the page sending this request is part of this context	
+			// Verify that the page making the request is part of this activity 
+			if (!PageIsInThisContext(sender))
+			{
+				return;
+			}
+
 			AlertDialog alert = new AlertDialog.Builder(_context).Create();
 			alert.SetTitle(arguments.Title);
 			alert.SetMessage(arguments.Message);
@@ -113,6 +128,18 @@ namespace Xamarin.Forms.Platform.Android
 					_supportsProgress = true;
 				return _supportsProgress.Value;
 			}
+		}
+
+		bool PageIsInThisContext(Page page)
+		{
+			var renderer = Platform.GetRenderer(page);
+
+			if (renderer?.View?.Context == null)
+			{
+				return false;
+			}
+
+			return renderer.View.Context.Equals(_context);
 		}
 	}
 }
