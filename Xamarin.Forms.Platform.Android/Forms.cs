@@ -18,6 +18,7 @@ using Android.Util;
 using Android.Views;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.Android;
+using Debug = System.Diagnostics.Debug;
 using Resource = Android.Resource;
 using Trace = System.Diagnostics.Trace;
 
@@ -217,7 +218,7 @@ namespace Xamarin.Forms
 					ScaledScreenSize = new Size(_pixelScreenSize.Width / _scalingFactor, _pixelScreenSize.Width / _scalingFactor);
 				}
 
-				CheckOrientationChanged(_formsActivity.Resources.Configuration.Orientation);
+				CheckOrientationChanged(formsActivity.Resources.Configuration.Orientation);
 
 				// This will not be an implementation of IDeviceInfoProvider when running inside the context
 				// of layoutlib, which is what the Android Designer does.
@@ -449,6 +450,10 @@ namespace Xamarin.Forms
 			{
 				global::Android.Net.Uri aUri = global::Android.Net.Uri.Parse(uri.ToString());
 				var intent = new Intent(Intent.ActionView, aUri);
+
+				Debug.WriteLine($">>>>> AndroidPlatformServices OpenUriAction 452: _context is {_context}");
+				Debug.WriteLine($">>>>> AndroidPlatformServices OpenUriAction 455: IsDestroyed is {((Activity)_context).IsDestroyed}");
+
 				_context.StartActivity(intent);
 			}
 
