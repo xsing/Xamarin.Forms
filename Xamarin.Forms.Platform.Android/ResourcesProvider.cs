@@ -7,18 +7,20 @@ namespace Xamarin.Forms.Platform.Android
 {
 	internal class ResourcesProvider : ISystemResourcesProvider
 	{
-		ResourceDictionary _dictionary;
+		readonly ResourceDictionary _dictionary;
+
+		public ResourcesProvider(Context context)
+		{
+			_dictionary = new ResourceDictionary();
+			UpdateStyles(context);
+		}
 
 		public IResourceDictionary GetSystemResources()
 		{
-			_dictionary = new ResourceDictionary();
-
-			UpdateStyles();
-
 			return _dictionary;
 		}
 
-		public Style GetStyle(int style)
+		static Style GetStyle(int style, Context context)
 		{
 			var result = new Style(typeof(Label));
 
@@ -27,7 +29,6 @@ namespace Xamarin.Forms.Platform.Android
 			global::Android.Graphics.Color defaultColor = global::Android.Graphics.Color.Argb(0, 0, 0, 0);
 			global::Android.Graphics.Color androidColor = defaultColor;
 
-			Context context = Forms.Context;
 			using (var value = new TypedValue())
 			{
 				if (context.Theme.ResolveAttribute(style, value, true))
@@ -56,14 +57,14 @@ namespace Xamarin.Forms.Platform.Android
 			return result;
 		}
 
-		void UpdateStyles()
+		void UpdateStyles(Context context)
 		{
 			_dictionary[Device.Styles.BodyStyleKey] = new Style(typeof(Label)); // do nothing, its fine
-			_dictionary[Device.Styles.TitleStyleKey] = GetStyle(global::Android.Resource.Attribute.TextAppearanceLarge);
-			_dictionary[Device.Styles.SubtitleStyleKey] = GetStyle(global::Android.Resource.Attribute.TextAppearanceMedium);
-			_dictionary[Device.Styles.CaptionStyleKey] = GetStyle(global::Android.Resource.Attribute.TextAppearanceSmall);
-			_dictionary[Device.Styles.ListItemTextStyleKey] = GetStyle(global::Android.Resource.Attribute.TextAppearanceListItem);
-			_dictionary[Device.Styles.ListItemDetailTextStyleKey] = GetStyle(global::Android.Resource.Attribute.TextAppearanceListItemSmall);
+			_dictionary[Device.Styles.TitleStyleKey] = GetStyle(global::Android.Resource.Attribute.TextAppearanceLarge, context);
+			_dictionary[Device.Styles.SubtitleStyleKey] = GetStyle(global::Android.Resource.Attribute.TextAppearanceMedium, context);
+			_dictionary[Device.Styles.CaptionStyleKey] = GetStyle(global::Android.Resource.Attribute.TextAppearanceSmall, context);
+			_dictionary[Device.Styles.ListItemTextStyleKey] = GetStyle(global::Android.Resource.Attribute.TextAppearanceListItem, context);
+			_dictionary[Device.Styles.ListItemDetailTextStyleKey] = GetStyle(global::Android.Resource.Attribute.TextAppearanceListItemSmall, context);
 		}
 	}
 }

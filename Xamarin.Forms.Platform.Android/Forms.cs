@@ -29,7 +29,6 @@ namespace Xamarin.Forms
 
 		static bool? s_isLollipopOrNewer;
 
-		// TODO hartez 2017/08/28 18:26:25 Turn this obsolete back on	
 		[Obsolete("Context is obsolete as of version 3.0. Please use a local context instead.")]
 		public static Context Context { get; internal set; }
 
@@ -104,9 +103,14 @@ namespace Xamarin.Forms
 				viewInitialized(self, new ViewInitializedEventArgs { View = self, NativeView = nativeView });
 		}
 
+		// TODO hartez 2017/08/30 17:25:48 So do we need to make sure this gets re-inited if the context changes (activity is restarted or whatever)?	
+		// see: https://github.com/xamarin/Duplo/commit/7509e8e6d340cd0debe259008c3e7f5f97594ea1 and https://github.com/xamarin/Duplo/issues/1331
+
 		static void SetupInit(Context activity, Assembly resourceAssembly)
 		{
+#pragma warning disable 618 // Still have to set this up so obsolete code can function
 			Context = activity;
+#pragma warning restore 618
 
 			ResourceManager.Init(resourceAssembly);
 
@@ -115,8 +119,8 @@ namespace Xamarin.Forms
 			if (!IsInitialized)
 				Internals.Log.Listeners.Add(new DelegateLogListener((c, m) => Trace.WriteLine(m, c)));
 
-			Device.PlatformServices = new AndroidPlatformServices();
-
+			Device.PlatformServices = new AndroidPlatformServices(activity);
+			
 			// use field and not property to avoid exception in getter
 			if (Device.info != null)
 			{
@@ -136,12 +140,16 @@ namespace Xamarin.Forms
 				Registrar.RegisterAll(new[] { typeof(ExportRendererAttribute), typeof(ExportCellAttribute), typeof(ExportImageSourceHandlerAttribute) });
 			}
 
-			int minWidthDp = Context.Resources.Configuration.SmallestScreenWidthDp;
+			int minWidthDp = activity.Resources.Configuration.SmallestScreenWidthDp;
 
 			Device.SetIdiom(minWidthDp >= TabletCrossover ? TargetIdiom.Tablet : TargetIdiom.Phone);
 
 			if (ExpressionSearch.Default == null)
 				ExpressionSearch.Default = new AndroidExpressionSearch();
+
+			// Can't register the ResourcesProvider via DependencyAttribute because we need a context for it; instead
+			// we'll register a specific instance of it here
+			DependencyService.Register<ISystemResourcesProvider, ResourcesProvider>(new ResourcesProvider(activity));
 
 			IsInitialized = true;
 		}
@@ -295,6 +303,13 @@ namespace Xamarin.Forms
 
 			static Handler s_handler;
 
+			readonly Context _context;
+
+			public AndroidPlatformServices(Context context)
+			{
+				_context = context;
+			}
+
 			public void BeginInvokeOnMainThread(Action action)
 			{
 				if (s_handler == null || s_handler.Looper != Looper.MainLooper)
@@ -421,7 +436,7 @@ namespace Xamarin.Forms
 			{
 				global::Android.Net.Uri aUri = global::Android.Net.Uri.Parse(uri.ToString());
 				var intent = new Intent(Intent.ActionView, aUri);
-				Context.StartActivity(intent);
+				_context.StartActivity(intent);
 			}
 
 			public void StartTimer(TimeSpan interval, Func<bool> callback)
@@ -455,20 +470,20 @@ namespace Xamarin.Forms
 				return 'a' + v - 10;
 			}
 
-			static bool TryGetTextAppearance(int appearance, out double val)
+			bool TryGetTextAppearance(int appearance, out double val)
 			{
 				val = 0;
 				try
 				{
 					using (var value = new TypedValue())
 					{
-						if (Context.Theme.ResolveAttribute(appearance, value, true))
+						if (_context.Theme.ResolveAttribute(appearance, value, true))
 						{
 							var textSizeAttr = new[] { Resource.Attribute.TextSize };
 							const int indexOfAttrTextSize = 0;
-							using (TypedArray array = Context.ObtainStyledAttributes(value.Data, textSizeAttr))
+							using (TypedArray array = _context.ObtainStyledAttributes(value.Data, textSizeAttr))
 							{
-								val = Context.FromPixels(array.GetDimensionPixelSize(indexOfAttrTextSize, -1));
+								val = _context.FromPixels(array.GetDimensionPixelSize(indexOfAttrTextSize, -1));
 								return true;
 							}
 						}

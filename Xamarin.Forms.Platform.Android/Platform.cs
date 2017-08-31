@@ -297,7 +297,7 @@ namespace Xamarin.Forms.Platform.Android
 			throw new InvalidOperationException("RemovePage is not supported globally on Android, please use a NavigationPage.");
 		}
 
-		[Obsolete("Context is obsolete as of version 3.0. Please use CreateRenderer(VisualElement, Context) instead.")]
+		[Obsolete("CreateRenderer(VisualElement) is obsolete as of version 3.0. Please use CreateRenderer(VisualElement, Context) instead.")]
 		public static IVisualElementRenderer CreateRenderer(VisualElement element)
 		{
 			return CreateRenderer(element, Forms.Context);
@@ -1070,9 +1070,12 @@ namespace Xamarin.Forms.Platform.Android
 			var rootPage = parent as Page;
 			if (rootPage != null)
 			{
+				// TODO hartez 2017/08/30 17:07:24 Determine whether we can do away with this whole attached prop	
 				Context context = GetPageContext(rootPage);
+#pragma warning disable 618
 				if (context != null)
 					Forms.Context = context;
+#pragma warning restore 618
 			}
 		}
 
