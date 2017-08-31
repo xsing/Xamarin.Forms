@@ -55,6 +55,10 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			readonly ViewGroup _content;
 
+			public EmbeddedFragment()
+			{
+			}
+
 			public EmbeddedFragment(ViewGroup content)
 			{
 				_content = content;
@@ -69,6 +73,10 @@ namespace Xamarin.Forms.Platform.Android
 		class EmbeddedSupportFragment : global::Android.Support.V4.App.Fragment
 		{
 			readonly ViewGroup _content;
+
+			public EmbeddedSupportFragment()
+			{
+			}
 
 			public EmbeddedSupportFragment(ViewGroup content)
 			{

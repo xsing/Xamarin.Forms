@@ -445,15 +445,14 @@ namespace Xamarin.Forms
 
 			public string RuntimePlatform => Device.Android;
 
-			// TODO hartez 2017/08/31 12:33:07 Test this thing with multiple Activities	
 			public void OpenUriAction(Uri uri)
 			{
 				global::Android.Net.Uri aUri = global::Android.Net.Uri.Parse(uri.ToString());
 				var intent = new Intent(Intent.ActionView, aUri);
-
-				Debug.WriteLine($">>>>> AndroidPlatformServices OpenUriAction 452: _context is {_context}");
-				Debug.WriteLine($">>>>> AndroidPlatformServices OpenUriAction 455: IsDestroyed is {((Activity)_context).IsDestroyed}");
-
+				
+				// This seems to work fine even if the context has been destroyed (while another activity is in the
+				// foreground). If we run into a situation where that's not the case, we'll have to do some work to
+				// make sure this uses the active activity when launching the Intent
 				_context.StartActivity(intent);
 			}
 
