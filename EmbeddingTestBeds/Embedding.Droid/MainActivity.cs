@@ -12,15 +12,18 @@ using Fragment = Android.Support.V4.App.Fragment;
 using FragmentTransaction = Android.Support.V4.App.FragmentTransaction;
 using View = Android.Views.View;
 using Button = Android.Widget.Button;
+using Debug = System.Diagnostics.Debug;
 
 namespace Embedding.Droid
 {
+	// TODO hartez 2017/08/31 12:01:27 Enable warnings as errors in Embedding projects	
 	[Activity(Label = "Embedding.Droid", MainLauncher = true, Icon = "@drawable/icon")]
 	public class MainActivity : FragmentActivity
 	{
 		Fragment _hello;
 		Fragment _alertsAndActionSheets;
 		Fragment _webview;
+		Fragment _openUri;
 
 		protected override void OnCreate(Bundle bundle)
 		{
@@ -28,12 +31,38 @@ namespace Embedding.Droid
 
 			Forms.Init(this, null);
 
+			Debug.WriteLine($">>>>> MainActivity OnCreate 25: {this}, Forms.Context is {Forms.Context}");
+
 			// Set our view from the "main" layout resource
 			SetContentView (Resource.Layout.Main);
 			
 			var ft = SupportFragmentManager.BeginTransaction();
 			ft.Replace(Resource.Id.fragment_frame_layout, new MainFragment(), "main");
 			ft.Commit();
+		}
+
+		protected override void OnStart()
+		{
+			Debug.WriteLine($">>>>> MainActivity OnStart 42: {this}, Forms.Context is {Forms.Context}");
+			base.OnStart();
+		}
+
+		protected override void OnRestart()
+		{
+			Debug.WriteLine($">>>>> MainActivity OnRestart 48: {this}, Forms.Context is {Forms.Context}");
+			base.OnRestart();
+		}
+
+		protected override void OnResume()
+		{
+			Debug.WriteLine($">>>>> MainActivity OnResume 54: {this}, Forms.Context is {Forms.Context}");
+			base.OnResume();
+		}
+
+		protected override void OnDestroy()
+		{
+			Debug.WriteLine($">>>>> MainActivity OnDestroy 61: {this}, Forms.Context is {Forms.Context}");
+			base.OnDestroy();
 		}
 
 		public void ShowHello()
@@ -56,6 +85,15 @@ namespace Embedding.Droid
 			}
 
 			ShowEmbeddedPageFragment(_webview);
+		}
+		public void ShowOpenUri()
+		{
+			if (_openUri == null)
+			{
+				_openUri = new OpenUri().CreateSupportFragment(this);
+			}
+
+			ShowEmbeddedPageFragment(_openUri );
 		}
 
 		public void ShowAlertsAndActionSheets()
@@ -92,11 +130,13 @@ namespace Embedding.Droid
 			var showEmbeddedButton = view.FindViewById<Button>(Resource.Id.showEmbeddedButton);
 			var showAlertsActionSheets = view.FindViewById<Button>(Resource.Id.showAlertsActionSheets);
 			var showWebView = view.FindViewById<Button>(Resource.Id.showWebView);
+			var showOpenUri = view.FindViewById<Button>(Resource.Id.showOpenUri);
 			var launchSecondActivity = view.FindViewById<Button>(Resource.Id.launchSecondActivity);
 
 			showEmbeddedButton.Click += ShowEmbeddedClick;
 			showAlertsActionSheets.Click += ShowAlertsActionSheetsClick;
 			showWebView.Click += ShowWebViewOnClick;
+			showOpenUri.Click += ShowOpenUriClick;
 			launchSecondActivity.Click += LaunchSecondActivityOnClick;
 
 			return view;
@@ -119,6 +159,11 @@ namespace Embedding.Droid
 		void ShowEmbeddedClick(object sender, EventArgs e)
 		{
 			((MainActivity)Activity).ShowHello();
+		}
+
+		void ShowOpenUriClick(object sender, EventArgs e)
+		{
+			((MainActivity)Activity).ShowOpenUri();
 		}
 	}
 }

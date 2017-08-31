@@ -38,6 +38,9 @@
     <Compile Include="AlertsAndActionSheets.xaml.cs">
       <DependentUpon>AlertsAndActionSheets.xaml</DependentUpon>
     </Compile>
+    <Compile Include="OpenUri.xaml.cs">
+      <DependentUpon>OpenUri.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Page3.xaml.cs">
       <DependentUpon>Page3.xaml</DependentUpon>
     </Compile>
@@ -87,6 +90,12 @@
       <Name>Xamarin.Forms.Build.Tasks</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="OpenUri.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\.nuspec\Xamarin.Forms.targets" />

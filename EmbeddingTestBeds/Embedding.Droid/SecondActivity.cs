@@ -24,6 +24,7 @@ namespace Embedding.Droid
 	{
 		Fragment _hello;
 		Fragment _alertsAndActionSheets;
+		Fragment _openUri;
 
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
@@ -67,6 +68,15 @@ namespace Embedding.Droid
 			ShowEmbeddedPageFragment(_alertsAndActionSheets);
 		}
 
+		public void ShowOpenUri()
+		{
+			if (_openUri == null)
+			{
+				_openUri = new OpenUri().CreateSupportFragment(this);
+			}
+
+			ShowEmbeddedPageFragment(_openUri );
+		}
 	}
 
 	public class SecondFragment : Fragment
@@ -76,9 +86,11 @@ namespace Embedding.Droid
 			var view =  inflater.Inflate(Resource.Layout.SecondFragment, container, false);
 			var showEmbeddedButton = view.FindViewById<Button>(Resource.Id.showEmbeddedButton);
 			var showAlertsActionSheets = view.FindViewById<Button>(Resource.Id.showAlertsActionSheets);
+			var showOpenUri = view.FindViewById<Button>(Resource.Id.showOpenUri);
 
 			showEmbeddedButton.Click += ShowEmbeddedClick;
 			showAlertsActionSheets.Click += ShowAlertsActionSheetsClick;
+			showOpenUri.Click += ShowOpenUriClick;
 
 			return view;
 		}
@@ -91,6 +103,11 @@ namespace Embedding.Droid
 		void ShowEmbeddedClick(object sender, EventArgs e)
 		{
 			((SecondActivity)Activity).ShowHello();
+		}
+
+		void ShowOpenUriClick(object sender, EventArgs e)
+		{
+			((SecondActivity)Activity).ShowOpenUri();
 		}
 	}
 }

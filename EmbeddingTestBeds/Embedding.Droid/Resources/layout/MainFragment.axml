@@ -39,6 +39,14 @@
     android:textColor="@android:color/white"
     android:layout_marginLeft="10dp"
     android:width="165dp" />
+  <Button
+    android:text="Show Open Uri Page"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/showOpenUri"
+    android:textColor="@android:color/white"
+    android:layout_marginLeft="10dp"
+    android:width="165dp" />
 
   <Button
     android:text="Launch Second Activity"
