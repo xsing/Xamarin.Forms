@@ -13,7 +13,6 @@ namespace Xamarin.Forms.ControlGallery.Android
 {
 	public class _57114CustomRenderer : Platform.Android.AppCompat.ViewRenderer<Bugzilla57114._57114View, _57114NativeView>
 	{
-		// TODO hartez 2017/08/28 16:25:07 Verifying that this constructor works	
 		public _57114CustomRenderer(Context context) : base(context)
 		{
 		}

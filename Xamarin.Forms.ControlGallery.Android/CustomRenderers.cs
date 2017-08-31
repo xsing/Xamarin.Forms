@@ -122,7 +122,6 @@ namespace Xamarin.Forms.ControlGallery.Android
 
 	public class NativeListViewRenderer : ViewRenderer<NativeListView, global::Android.Widget.ListView>
 	{
-		// TODO hartez Verifying that this constructor works
 #pragma warning disable 618 
 		public NativeListViewRenderer()
 #pragma warning restore 618
