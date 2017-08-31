@@ -131,7 +131,10 @@ namespace Xamarin.Forms.ControlGallery.Android
 
 		protected override global::Android.Widget.ListView CreateNativeControl()
 		{
+#pragma warning disable 618
+			// Disabled the warning so we have a test that this obsolete stuff still works
 			return new global::Android.Widget.ListView(Forms.Context);
+#pragma warning restore 618
 		}
 
 		protected override void OnElementChanged(ElementChangedEventArgs<NativeListView> e)
@@ -153,7 +156,10 @@ namespace Xamarin.Forms.ControlGallery.Android
 			{
 				// subscribe
 
+#pragma warning disable 618
+				// Disabled the warning so we have a test that this obsolete stuff still works
 				Control.Adapter = new NativeListViewAdapter(Forms.Context as Activity, e.NewElement);
+#pragma warning restore 618
 				Control.ItemClick += Clicked;
 			}
 		}
@@ -170,7 +176,10 @@ namespace Xamarin.Forms.ControlGallery.Android
 			{
 				// update the Items list in the UITableViewSource
 
+#pragma warning disable 618
+				// Disabled the warning so we have a test that this obsolete stuff still works
 				Control.Adapter = new NativeListViewAdapter(Forms.Context as Activity, Element);
+#pragma warning restore 618
 			}
 		}
 	}
@@ -310,7 +319,10 @@ namespace Xamarin.Forms.ControlGallery.Android
 
 		protected override global::Android.Widget.ListView CreateNativeControl()
 		{
+#pragma warning disable 618
+			// Disabled the warning so we have a test that this obsolete stuff still works
 			return new global::Android.Widget.ListView(Forms.Context);
+#pragma warning restore 618
 		}
 
 		protected override void OnElementChanged(ElementChangedEventArgs<NativeListView2> e)
@@ -331,7 +343,10 @@ namespace Xamarin.Forms.ControlGallery.Android
 			if (e.NewElement != null)
 			{
 				// subscribe
+#pragma warning disable 618
+				// Disabled the warning so we have a test that this obsolete stuff still works
 				Control.Adapter = new NativeAndroidListViewAdapter(Forms.Context as Activity, e.NewElement);
+#pragma warning restore 618
 				Control.ItemClick += Clicked;
 			}
 		}
@@ -353,7 +368,10 @@ namespace Xamarin.Forms.ControlGallery.Android
 			{
 				// update the Items list in the UITableViewSource
 
+#pragma warning disable 618
+				// Disabled the warning so we have a test that this obsolete stuff still works
 				Control.Adapter = new NativeAndroidListViewAdapter(Forms.Context as Activity, Element);
+#pragma warning restore 618
 			}
 		}
 	}
