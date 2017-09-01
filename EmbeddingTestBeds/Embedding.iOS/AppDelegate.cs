@@ -18,7 +18,6 @@ namespace Embedding.iOS
 		UIViewController _webview;
 
 		UIBarButtonItem _helloButton;
-		UIBarButtonItem _alertsAndActionSheetsButton;
 
 		UIWindow _window;
 		UINavigationController _navigation;
@@ -59,21 +58,6 @@ namespace Embedding.iOS
 
 			return _helloButton;
 		}
-
-		//public UIBarButtonItem CreateAlertsAndActionSheetsButton()
-		//{
-		//	if (_alertsAndActionSheetsButton == null)
-		//	{
-		//		var btn = new UIButton(new CGRect(0, 0, 88, 44));
-		//		btn.SetTitle("AaA", UIControlState.Normal);
-		//		btn.SetTitleColor(UIColor.Blue, UIControlState.Normal);
-		//		btn.TouchUpInside += (sender, e) => ShowAlertsAndActionSheets();
-
-		//		_alertsAndActionSheetsButton  = new UIBarButtonItem(btn);
-		//	}
-
-		//	return _alertsAndActionSheetsButton;
-		//}
 
 		public void ShowHello()
 		{
