@@ -57,16 +57,6 @@ namespace Xamarin.Forms
 			DependencyImplementations[targetType] = new DependencyData { ImplementorType = implementorType };
 		}
 
-		public static void Register<T, TImpl>(TImpl instance) where T : class where TImpl : class, T
-		{
-			Type targetType = typeof(T);
-			Type implementorType = typeof(TImpl);
-			if (!DependencyTypes.Contains(targetType))
-				DependencyTypes.Add(targetType);
-
-			DependencyImplementations[targetType] = new DependencyData { ImplementorType = implementorType, GlobalInstance = instance };
-		}
-
 		static Type FindImplementor(Type target)
 		{
 			return DependencyTypes.FirstOrDefault(t => target.IsAssignableFrom(t));

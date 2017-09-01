@@ -18,7 +18,6 @@ using Android.Util;
 using Android.Views;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.Android;
-using Debug = System.Diagnostics.Debug;
 using Resource = Android.Resource;
 using Trace = System.Diagnostics.Trace;
 
@@ -32,6 +31,9 @@ namespace Xamarin.Forms
 
 		[Obsolete("Context is obsolete as of version 3.0. Please use a local context instead.")]
 		public static Context Context { get; internal set; }
+
+		// One per process; does not change, suitable for loading resources (e.g., ResourceProvider)
+		internal static Context ApplicationContext { get; private set; }
 
 		public static bool IsInitialized { get; private set; }
 
@@ -106,16 +108,34 @@ namespace Xamarin.Forms
 
 		static void SetupInit(Context activity, Assembly resourceAssembly)
 		{
+			if (!IsInitialized)
+			{
+				// Only need to get this once; it won't change
+				ApplicationContext = activity.ApplicationContext;
+			}
+
 #pragma warning disable 618 // Still have to set this up so obsolete code can function
 			Context = activity;
 #pragma warning restore 618
 
-			ResourceManager.Init(resourceAssembly);
+			if (!IsInitialized)
+			{
+				// Only need to do this once
+				ResourceManager.Init(resourceAssembly);
+			}
+
+			// We want this to be updated when we have a new activity (e.g. on a configuration change)
+			// This could change if the UI mode changes (e.g., if night mode is enabled)
 			Color.SetAccent(GetAccentColor(activity));
 
 			if (!IsInitialized)
+			{
+				// Only need to do this once
 				Internals.Log.Listeners.Add(new DelegateLogListener((c, m) => Trace.WriteLine(m, c)));
+			}
 
+			// We want this to be updated when we have a new activity (e.g. on a configuration change)
+			// because AndroidPlatformServices needs a current activity to launch URIs from
 			Device.PlatformServices = new AndroidPlatformServices(activity);
 			
 			// use field and not property to avoid exception in getter
@@ -125,6 +145,8 @@ namespace Xamarin.Forms
 				Device.info = null;
 			}
 
+			// We want this to be updated when we have a new activity (e.g. on a configuration change)
+			// because Device.Info watches for orientation changes and we need a current activity for that
 			Device.Info = new AndroidDeviceInfo(activity);
 
 			var ticker = Ticker.Default as AndroidTicker;
@@ -134,19 +156,16 @@ namespace Xamarin.Forms
 
 			if (!IsInitialized)
 			{
+				// Only need to do this once
 				Registrar.RegisterAll(new[] { typeof(ExportRendererAttribute), typeof(ExportCellAttribute), typeof(ExportImageSourceHandlerAttribute) });
 			}
 
+			// This could change as a result of a config change, so we need to check it every time
 			int minWidthDp = activity.Resources.Configuration.SmallestScreenWidthDp;
-
 			Device.SetIdiom(minWidthDp >= TabletCrossover ? TargetIdiom.Tablet : TargetIdiom.Phone);
 
 			if (ExpressionSearch.Default == null)
 				ExpressionSearch.Default = new AndroidExpressionSearch();
-			
-			// Can't register the ResourcesProvider via DependencyAttribute because we need a context for it; instead
-			// we'll register a specific instance of it here
-			DependencyService.Register<ISystemResourcesProvider, ResourcesProvider>(new ResourcesProvider(activity));
 
 			IsInitialized = true;
 		}
