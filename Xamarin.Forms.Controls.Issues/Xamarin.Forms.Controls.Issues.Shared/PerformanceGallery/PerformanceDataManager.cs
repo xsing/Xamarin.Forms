@@ -12,7 +12,7 @@ namespace Xamarin.Forms.Controls.Issues
 	[Preserve(AllMembers = true)]
 	internal static class PerformanceDataManager
 	{
-		const string GetScenarioResultsRoute = "/api/ScenarioResults/";
+		const string GetScenarioResultsRoute = "/api/ScenarioResults/device/";
 		const string PostScenarioResultDetailsRoute = "/api/ScenarioResultDetails/";
 		const string PostScenarioResultRoute = "/api/ScenarioResults/";
 		static readonly HttpClient _client;
@@ -36,9 +36,9 @@ namespace Xamarin.Forms.Controls.Issues
 			Fail
 		}
 
-		public static async Task<Dictionary<string, double>> GetScenarioResults(string platform)
+		public static async Task<Dictionary<string, double>> GetScenarioResults(string deviceId)
 		{
-			var response = await _client.GetAsync(GetScenarioResultsRoute + platform);
+			var response = await _client.GetAsync(GetScenarioResultsRoute + deviceId);
 			var content = await response.Content.ReadAsStringAsync();
 			return JsonConvert.DeserializeObject<Dictionary<string, double>>(content);
 		}
@@ -63,7 +63,7 @@ namespace Xamarin.Forms.Controls.Issues
 
 			var scenarioResult = JsonConvert.DeserializeObject<ScenarioResult>(responseContent);
 
-			PostScenarioResultDetails(scenarioResult.Id, details);
+			await PostScenarioResultDetails(scenarioResult.Id, details);
 		}
 
 		static async Task PostScenarioResultDetails(Guid scenarioResultId, Dictionary<string, PerformanceProvider.Statistic> details)
