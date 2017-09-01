@@ -3,7 +3,6 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Views;
-using Android.Widget;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -20,12 +19,12 @@ namespace Xamarin.Forms.Platform.Android
 				app.MainPage = view;
 			}
 
-			var result = new Platform(context, true);
-			result.SetPage(view);
+			var platform = new Platform(context, true);
+			platform.SetPage(view);
 
-			var vg = result.GetViewGroup();
+			var vg = platform.GetViewGroup();
 
-			return new EmbeddedFragment(vg);
+			return new EmbeddedFragment(vg, platform);
 		}
 
 		public static global::Android.Support.V4.App.Fragment CreateSupportFragment(this ContentPage view, Context context)
@@ -39,13 +38,12 @@ namespace Xamarin.Forms.Platform.Android
 				app.MainPage = view;
 			}
 
-			var result = new Platform(context, true);
-			result.SetPage(view);
+			var platform = new Platform(context, true);
+			platform.SetPage(view);
 
-			var vg = result.GetViewGroup();
+			var vg = platform.GetViewGroup();
 
-			// TODO hartez 2017/08/31 17:47:58 This and EmbeddedFragment probably need to keep Platform refs and override Dispose to dispose of them	
-			return new EmbeddedSupportFragment(vg);
+			return new EmbeddedSupportFragment(vg, platform);
 		}
 
 		class DefaultApplication : Application
@@ -55,38 +53,80 @@ namespace Xamarin.Forms.Platform.Android
 		class EmbeddedFragment : Fragment
 		{
 			readonly ViewGroup _content;
+			readonly Platform _platform;
+			bool _disposed;
 
+			// ReSharper disable once UnusedMember.Local (Android uses this on configuration change
 			public EmbeddedFragment()
 			{
 			}
 
-			public EmbeddedFragment(ViewGroup content)
+			public EmbeddedFragment(ViewGroup content, Platform platform)
 			{
 				_content = content;
+				_platform = platform;
 			}
 
 			public override global::Android.Views.View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 			{
 				return _content;
+			}
+
+			protected override void Dispose(bool disposing)
+			{
+				if (_disposed)
+				{
+					return;
+				}
+
+				_disposed = true;
+
+				if (disposing)
+				{
+					(_platform as IDisposable)?.Dispose();
+				}
+
+				base.Dispose(disposing);
 			}
 		}
 
 		class EmbeddedSupportFragment : global::Android.Support.V4.App.Fragment
 		{
 			readonly ViewGroup _content;
+			readonly Platform _platform;
+			bool _disposed;
 
+			// ReSharper disable once UnusedMember.Local (Android uses this on configuration change
 			public EmbeddedSupportFragment()
 			{
 			}
 
-			public EmbeddedSupportFragment(ViewGroup content)
+			public EmbeddedSupportFragment(ViewGroup content, Platform platform)
 			{
 				_content = content;
+				_platform = platform;
 			}
 
 			public override global::Android.Views.View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 			{
 				return _content;
+			}
+
+			protected override void Dispose(bool disposing)
+			{
+				if (_disposed)
+				{
+					return;
+				}
+
+				_disposed = true;
+
+				if (disposing)
+				{
+					(_platform as IDisposable)?.Dispose();
+				}
+
+				base.Dispose(disposing);
 			}
 		}
 	}
