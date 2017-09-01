@@ -1,5 +1,4 @@
-﻿using System;
-using CoreGraphics;
+﻿using CoreGraphics;
 using Embedding.XF;
 using Foundation;
 using UIKit;
@@ -78,25 +77,21 @@ namespace Embedding.iOS
 
 		public void ShowHello()
 		{
-			// Create a XF History page as a view controller
 			if (_hello == null)
 			{
 				_hello = new Hello().CreateViewController();
 			}
 
-			// And push it onto the navigation stack
 			_navigation.PushViewController(_hello, true);
 		}
 
 		public void ShowAlertsAndActionSheets()
 		{
-			// Create a XF History page as a view controller
 			if (_alertsAndActionSheets == null)
 			{
 				_alertsAndActionSheets = new AlertsAndActionSheets().CreateViewController();
 			}
 
-			// And push it onto the navigation stack
 			_navigation.PushViewController(_alertsAndActionSheets, true);
 		}
 

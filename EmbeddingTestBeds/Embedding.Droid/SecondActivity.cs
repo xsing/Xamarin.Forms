@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V4.App;
 using Android.Views;
-using Android.Widget;
 using Embedding.XF;
 using Xamarin.Forms.Platform.Android;
 using Fragment = Android.Support.V4.App.Fragment;
@@ -49,7 +42,6 @@ namespace Embedding.Droid
 
 		public void ShowHello()
 		{
-			// Create a XF Hello page as a fragment
 			if (_hello == null)
 			{
 				_hello = new Hello().CreateSupportFragment(this);

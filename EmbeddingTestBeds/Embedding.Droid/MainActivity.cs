@@ -1,7 +1,5 @@
 ﻿using System;
 using Android.App;
-using Android.Content;
-using Android.Widget;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Views;
@@ -12,11 +10,9 @@ using Fragment = Android.Support.V4.App.Fragment;
 using FragmentTransaction = Android.Support.V4.App.FragmentTransaction;
 using View = Android.Views.View;
 using Button = Android.Widget.Button;
-using Debug = System.Diagnostics.Debug;
 
 namespace Embedding.Droid
 {
-	// TODO hartez 2017/08/31 12:01:27 Enable warnings as errors in Embedding projects	
 	[Activity(Label = "Embedding.Droid", MainLauncher = true, Icon = "@drawable/icon")]
 	public class MainActivity : FragmentActivity
 	{
@@ -31,7 +27,6 @@ namespace Embedding.Droid
 
 			Forms.Init(this, null);
 
-			// Set our view from the "main" layout resource
 			SetContentView (Resource.Layout.Main);
 			
 			var ft = SupportFragmentManager.BeginTransaction();
@@ -41,7 +36,6 @@ namespace Embedding.Droid
 
 		public void ShowHello()
 		{
-			// Create a XF Hello page as a fragment
 			if (_hello == null)
 			{
 				_hello = new Hello().CreateSupportFragment(this);
@@ -52,7 +46,6 @@ namespace Embedding.Droid
 
 		public void ShowWebView()
 		{
-			// Create a XF Hello page as a fragment
 			if (_webview == null)
 			{
 				_webview= new WebViewExample().CreateSupportFragment(this);
