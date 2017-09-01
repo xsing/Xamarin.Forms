@@ -15,7 +15,8 @@ namespace Xamarin.Forms.ControlGallery.Android
 {
 	public class PerformanceTrackerRenderer : ViewRenderer, IOnDrawListener
 	{
-		int _timeout = 250;
+		const int Default_Timeout = 250;
+		int _timeout = Default_Timeout;
 		DateTime _lastCall;
 		bool _sagaComplete;
 		Stopwatch _timer = new Stopwatch();
@@ -86,7 +87,11 @@ namespace Xamarin.Forms.ControlGallery.Android
 			_timer.Reset();
 			UnsubscribeChildrenToDraw(this, this);
 
-			_timeout = (int)Math.Round(PerformanceTracker.ExpectedRenderTime * 3);
+			int newTimeout = (int)Math.Round(PerformanceTracker.ExpectedRenderTime * 3);
+			if (newTimeout > Default_Timeout)
+				_timeout = newTimeout;
+			else
+				_timeout = Default_Timeout;
 		}
 
 		async void WaitForComplete()
