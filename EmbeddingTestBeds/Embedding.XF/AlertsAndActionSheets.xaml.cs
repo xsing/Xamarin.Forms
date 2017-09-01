@@ -20,8 +20,6 @@ namespace Embedding.XF
 			AlertButton.Clicked += AlertButtonOnClicked;
 		}
 
-		// TODO hartez 2017/08/17 15:32:59 Add a button to toggle IsBusy so we can test/demo that	
-
 		async void AlertButtonOnClicked(object sender, EventArgs eventArgs)
 		{
 			await DisplayAlert("Alert", "This alert is being displayed from a XF Page", "Cool, thanks");
