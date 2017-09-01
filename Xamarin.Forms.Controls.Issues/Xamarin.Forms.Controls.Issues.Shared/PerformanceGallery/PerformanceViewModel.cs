@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Xamarin.Forms.Internals;
 
@@ -112,7 +113,7 @@ namespace Xamarin.Forms.Controls
 		{
 			Scenario = scenario.Name;
 
-			double time = 5000; // test should probably pass if there are no results yet.
+			double time;
 			BenchmarkResults.TryGetValue(scenario.Name, out time);
 			ExpectedRenderTime = time;
 
