@@ -23,6 +23,8 @@ namespace Xamarin.Forms.Controls.Issues
 	{
 		const string Fail = "FAIL";
 		const string Next = "Next Scenario";
+		const string NextButtonId = "NextButton";
+		const string TestRunRefId = "TestRunRefId";
 		const string Pending = "PENDING";
 		const string Success = "SUCCESS";
 		const double Threshold = 0.25;
@@ -36,14 +38,12 @@ namespace Xamarin.Forms.Controls.Issues
 		PerformanceTracker _PerformanceTracker = new PerformanceTracker();
 		List<PerformanceScenario> _TestCases = new List<PerformanceScenario>();
 		int _TestNumber = 0;
-		Guid _TestRunReferenceId;
 
 		PerformanceViewModel ViewModel => BindingContext as PerformanceViewModel;
 
 		protected override async void Init()
 		{
-			_TestRunReferenceId = Guid.NewGuid();
-
+			_DeviceIdentifier = CrossDeviceInfo.Current.Id;
 			_DeviceIdiom = CrossDeviceInfo.Current.Idiom.ToString();
 			_DeviceModel = CrossDeviceInfo.Current.Model;
 			_DevicePlatform = CrossDeviceInfo.Current.Platform.ToString();
@@ -56,12 +56,16 @@ namespace Xamarin.Forms.Controls.Issues
 
 			_TestCases.AddRange(InflatePerformanceScenarios());
 
-			var nextButton = new Button { Text = Pending, IsEnabled = false };
+			var nextButton = new Button { Text = Pending, IsEnabled = false, AutomationId = NextButtonId };
 			nextButton.Clicked += NextButton_Clicked;
 
-			Content = new StackLayout { Children = { nextButton, _PerformanceTracker } };
+			var testRunRef = new Label { AutomationId = TestRunRefId };
+			testRunRef.SetBinding(Label.TextProperty, nameof(PerformanceViewModel.TestRunReferenceId));
+
+			Content = new StackLayout { Children = { testRunRef, nextButton, _PerformanceTracker } };
 
 			ViewModel.BenchmarkResults = await PerformanceDataManager.GetScenarioResults(_DevicePlatform);
+			ViewModel.TestRunReferenceId = Guid.NewGuid();
 
 			nextButton.IsEnabled = true;
 			nextButton.Text = Next;
@@ -113,7 +117,7 @@ namespace Xamarin.Forms.Controls.Issues
 
 			PerformanceDataManager.PostScenarioResults(ViewModel.Scenario, 
 				result, 
-				_TestRunReferenceId, 
+				ViewModel.TestRunReferenceId, 
 				_DeviceIdentifier, 
 				_DevicePlatform, 
 				_DeviceVersionNumber, 
@@ -141,16 +145,15 @@ namespace Xamarin.Forms.Controls.Issues
 		[Test]
 		public void PerformanceTest()
 		{
-			_DeviceIdentifier = RunningApp.Device.DeviceIdentifier;
-
 			var testCasesCount = FindPerformanceScenarios().Count();
 
 			List<string> warnings = new List<string>();
 
+			RunningApp.WaitForElement(q => q.Marked(Next));
+
 			for (int i = 0; i < testCasesCount; i++)
 			{
-				RunningApp.WaitForElement(q => q.Marked(Next));
-				RunningApp.Tap(q => q.Marked(Next));
+				RunningApp.Tap(q => q.Marked(NextButtonId));
 
 				try
 				{
@@ -159,13 +162,18 @@ namespace Xamarin.Forms.Controls.Issues
 				catch (Exception)
 				{
 					var message = GetFailureMessage();
+					RunningApp.Screenshot(message);
 					if (!warnings.Contains(message))
 						warnings.Add(message);
 				}
 			}
 
+			string testRunReferenceId = GetText(TestRunRefId);
+
 			if (warnings.Any())
-				Assert.Inconclusive($"Performance threshold exceeded.\r\n{string.Join("\r\n", warnings)}");
+				Assert.Inconclusive($"Performance threshold exceeded.\r\n{string.Join("\r\n", warnings)}\r\nTestRunReferenceId: {testRunReferenceId}");
+			else
+				Assert.Pass($"TestRunReferenceId: {testRunReferenceId}");
 		}
 
 		string GetFailureMessage()

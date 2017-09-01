@@ -91,6 +91,24 @@ namespace Xamarin.Forms.Controls
 			}
 		}
 
+		Guid _TestRunReferenceId;
+		public Guid TestRunReferenceId
+		{
+			get
+			{
+				return _TestRunReferenceId;
+			}
+			set
+			{
+				if (value == _TestRunReferenceId)
+					return;
+
+				_TestRunReferenceId = value;
+
+				PropertyChanged(this, new PropertyChangedEventArgs(nameof(TestRunReferenceId)));
+			}
+		}
+
 		View _View;
 		public View View
 		{
