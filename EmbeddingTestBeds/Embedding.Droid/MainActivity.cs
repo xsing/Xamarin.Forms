@@ -31,38 +31,12 @@ namespace Embedding.Droid
 
 			Forms.Init(this, null);
 
-			Debug.WriteLine($">>>>> MainActivity OnCreate 25: {this}, Forms.Context is {Forms.Context}");
-
 			// Set our view from the "main" layout resource
 			SetContentView (Resource.Layout.Main);
 			
 			var ft = SupportFragmentManager.BeginTransaction();
 			ft.Replace(Resource.Id.fragment_frame_layout, new MainFragment(), "main");
 			ft.Commit();
-		}
-
-		protected override void OnStart()
-		{
-			Debug.WriteLine($">>>>> MainActivity OnStart 42: {this}, Forms.Context is {Forms.Context}");
-			base.OnStart();
-		}
-
-		protected override void OnRestart()
-		{
-			Debug.WriteLine($">>>>> MainActivity OnRestart 48: {this}, Forms.Context is {Forms.Context}");
-			base.OnRestart();
-		}
-
-		protected override void OnResume()
-		{
-			Debug.WriteLine($">>>>> MainActivity OnResume 54: {this}, Forms.Context is {Forms.Context}");
-			base.OnResume();
-		}
-
-		protected override void OnDestroy()
-		{
-			Debug.WriteLine($">>>>> MainActivity OnDestroy 61: {this}, Forms.Context is {Forms.Context}");
-			base.OnDestroy();
 		}
 
 		public void ShowHello()

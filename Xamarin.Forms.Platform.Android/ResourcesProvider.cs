@@ -9,6 +9,7 @@ namespace Xamarin.Forms.Platform.Android
 	{
 		readonly ResourceDictionary _dictionary;
 
+		// TODO hartez 2017/09/01 12:38:52 This might be doable with the Application Context	
 		public ResourcesProvider(Context context)
 		{
 			_dictionary = new ResourceDictionary();
