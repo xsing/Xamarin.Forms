@@ -11,9 +11,9 @@ namespace Xamarin.Forms.Platform.Android
 	{
 		static readonly List<PopupRequestHelper> s_subscriptions = new List<PopupRequestHelper>();
 
-		internal static void Subscribe(Context context)
+		internal static void Subscribe(Activity context)
 		{
-			if (s_subscriptions.Any(s => s.Context == context))
+			if (s_subscriptions.Any(s => s.Activity == context))
 			{
 				return;
 			}
@@ -23,7 +23,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		internal static void Unsubscribe(Context context)
 		{
-			var toRemove = s_subscriptions.Where(s => s.Context == context);
+			var toRemove = s_subscriptions.Where(s => s.Activity == context);
 			foreach (PopupRequestHelper popupRequestHelper in toRemove)
 			{
 				popupRequestHelper.Dispose();
@@ -31,9 +31,9 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
-		internal static void ResetBusyCount(Context context)
+		internal static void ResetBusyCount(Activity context)
 		{
-			s_subscriptions.FirstOrDefault(s => s.Context == context)?.ResetBusyCount();
+			s_subscriptions.FirstOrDefault(s => s.Activity == context)?.ResetBusyCount();
 		}
 
 		internal sealed class PopupRequestHelper : IDisposable
@@ -41,21 +41,21 @@ namespace Xamarin.Forms.Platform.Android
 			int _busyCount;
 			bool? _supportsProgress;
 
-			internal PopupRequestHelper(Context context)
+			internal PopupRequestHelper(Activity context)
 			{
-				Context = context;
-				MessagingCenter.Subscribe<Page, bool>(Context, Page.BusySetSignalName, OnPageBusy);
-				MessagingCenter.Subscribe<Page, AlertArguments>(Context, Page.AlertSignalName, OnAlertRequested);
-				MessagingCenter.Subscribe<Page, ActionSheetArguments>(Context, Page.ActionSheetSignalName, OnActionSheetRequested);
+				Activity = context;
+				MessagingCenter.Subscribe<Page, bool>(Activity, Page.BusySetSignalName, OnPageBusy);
+				MessagingCenter.Subscribe<Page, AlertArguments>(Activity, Page.AlertSignalName, OnAlertRequested);
+				MessagingCenter.Subscribe<Page, ActionSheetArguments>(Activity, Page.ActionSheetSignalName, OnActionSheetRequested);
 			}
 
-			public Context Context { get; }
+			public Activity Activity { get; }
 
 			public void Dispose()
 			{
-				MessagingCenter.Unsubscribe<Page, AlertArguments>(Context, Page.AlertSignalName);
-				MessagingCenter.Unsubscribe<Page, bool>(Context, Page.BusySetSignalName);
-				MessagingCenter.Unsubscribe<Page, ActionSheetArguments>(Context, Page.ActionSheetSignalName);
+				MessagingCenter.Unsubscribe<Page, AlertArguments>(Activity, Page.AlertSignalName);
+				MessagingCenter.Unsubscribe<Page, bool>(Activity, Page.BusySetSignalName);
+				MessagingCenter.Unsubscribe<Page, ActionSheetArguments>(Activity, Page.ActionSheetSignalName);
 			}
 
 			public void ResetBusyCount()
@@ -84,7 +84,7 @@ namespace Xamarin.Forms.Platform.Android
 					return;
 				}
 
-				var builder = new AlertDialog.Builder(Context);
+				var builder = new AlertDialog.Builder(Activity);
 				builder.SetTitle(arguments.Title);
 				string[] items = arguments.Buttons.ToArray();
 				builder.SetItems(items, (o, args) => arguments.Result.TrySetResult(items[args.Which]));
@@ -112,7 +112,7 @@ namespace Xamarin.Forms.Platform.Android
 					return;
 				}
 
-				AlertDialog alert = new AlertDialog.Builder(Context).Create();
+				AlertDialog alert = new AlertDialog.Builder(Activity).Create();
 				alert.SetTitle(arguments.Title);
 				alert.SetMessage(arguments.Message);
 				if (arguments.Accept != null)
@@ -128,17 +128,8 @@ namespace Xamarin.Forms.Platform.Android
 					return;
 #pragma warning disable 612, 618
 
-				// TODO hartez 2017/08/17 15:51:59 I don't feel great about this cast here;
-				// perhaps this should be in a separate helper class
-				var activity = Context as Activity;
-
-				if (activity == null)
-				{
-					return;
-				}
-
-				activity.SetProgressBarIndeterminate(true);
-				activity.SetProgressBarIndeterminateVisibility(isBusy);
+				Activity.SetProgressBarIndeterminate(true);
+				Activity.SetProgressBarIndeterminateVisibility(isBusy);
 #pragma warning restore 612, 618
 			}
 
@@ -151,10 +142,9 @@ namespace Xamarin.Forms.Platform.Android
 						return _supportsProgress.Value;
 					}
 
-					var activity = Context as Activity;
-					int progressCircularId = Context.Resources.GetIdentifier("progress_circular", "id", "android");
-					if (progressCircularId > 0 && activity != null)
-						_supportsProgress = activity.FindViewById(progressCircularId) != null;
+					int progressCircularId = Activity.Resources.GetIdentifier("progress_circular", "id", "android");
+					if (progressCircularId > 0)
+						_supportsProgress = Activity.FindViewById(progressCircularId) != null;
 					else
 						_supportsProgress = true;
 					return _supportsProgress.Value;
@@ -170,7 +160,7 @@ namespace Xamarin.Forms.Platform.Android
 					return false;
 				}
 
-				return renderer.View.Context.Equals(Context);
+				return renderer.View.Context.Equals(Activity);
 			}
 		}
 	}

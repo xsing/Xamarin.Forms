@@ -69,7 +69,14 @@ namespace Xamarin.Forms.Platform.Android
 			if (embedded)
 			{
 				// Set up handling of DisplayAlert/DisplayActionSheet/UpdateProgressBarVisibility
-				PopupManager.Subscribe(context);
+				var activity = context as Activity;
+				if (activity == null)
+				{
+					// Can't show dialogs if it's not an activity
+					return;
+				}
+
+				PopupManager.Subscribe(activity);
 				return;
 			}
 
