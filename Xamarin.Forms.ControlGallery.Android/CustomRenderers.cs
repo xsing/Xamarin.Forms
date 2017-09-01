@@ -581,7 +581,9 @@ namespace Xamarin.Forms.ControlGallery.Android
 		}
 	}
 
+#pragma warning disable 618
 	public class QuickCollectNavigationPage : Xamarin.Forms.Platform.Android.AppCompat.NavigationPageRenderer
+#pragma warning restore 618
 	{
 		bool _disposed;
 		NavigationPage _page;
