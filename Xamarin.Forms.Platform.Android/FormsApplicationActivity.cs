@@ -22,7 +22,6 @@ namespace Xamarin.Forms.Platform.Android
 		AndroidApplicationLifecycleState _currentState;
 		LinearLayout _layout;
 
-		readonly PopupRequestHelper _popupRequestHelper;
 
 		AndroidApplicationLifecycleState _previousState;
 
@@ -30,7 +29,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			_previousState = AndroidApplicationLifecycleState.Uninitialized;
 			_currentState = AndroidApplicationLifecycleState.Uninitialized;
-			_popupRequestHelper = new PopupRequestHelper(this);
+			PopupManager.Subscribe(this);
 		}
 
 		public event EventHandler ConfigurationChanged;
@@ -121,7 +120,7 @@ namespace Xamarin.Forms.Platform.Android
 			// may never be called
 			base.OnDestroy();
 
-			_popupRequestHelper?.Dispose();
+			PopupManager.Unsubscribe(this);
 
 			if (_canvas != null)
 				((IDisposable)_canvas).Dispose();
@@ -213,7 +212,7 @@ namespace Xamarin.Forms.Platform.Android
 				return;
 			}
 
-			_popupRequestHelper.ResetBusyCount();
+			PopupManager.ResetBusyCount(this);
 
 			_canvas = new Platform(this);
 			if (_application != null)

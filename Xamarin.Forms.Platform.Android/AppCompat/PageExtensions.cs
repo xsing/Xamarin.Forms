@@ -44,6 +44,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			var vg = result.GetViewGroup();
 
+			// TODO hartez 2017/08/31 17:47:58 This and EmbeddedFragment probably need to keep Platform refs and override Dispose to dispose of them	
 			return new EmbeddedSupportFragment(vg);
 		}
 

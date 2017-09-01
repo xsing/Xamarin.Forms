@@ -32,7 +32,6 @@ namespace Xamarin.Forms.Platform.Android
 		public delegate bool BackButtonPressedEventHandler(object sender, EventArgs e);
 
 		Application _application;
-		readonly PopupRequestHelper _popupRequestHelper;
 
 		AndroidApplicationLifecycleState _currentState;
 		ARelativeLayout _layout;
@@ -50,7 +49,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			_previousState = AndroidApplicationLifecycleState.Uninitialized;
 			_currentState = AndroidApplicationLifecycleState.Uninitialized;
-			_popupRequestHelper = new PopupRequestHelper(this);
+			PopupManager.Subscribe(this);
 		}
 
 		IApplicationController Controller => _application;
@@ -178,7 +177,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		protected override void OnDestroy()
 		{
-			_popupRequestHelper?.Dispose();
+			PopupManager.Unsubscribe(this);
 			_platform?.Dispose();
 
 			// call at the end to avoid race conditions with Platform dispose
@@ -296,7 +295,7 @@ namespace Xamarin.Forms.Platform.Android
 				return;
 			}
 
-			_popupRequestHelper.ResetBusyCount();
+			PopupManager.ResetBusyCount(this);
 
 			_platform = new AppCompat.Platform(this);
 			if (_application != null)
