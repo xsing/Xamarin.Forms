@@ -32,8 +32,6 @@ namespace Xamarin.Forms.Platform.Android
 					view.IsPlatformEnabled = newvalue != null;
 			});
 
-		internal static readonly BindableProperty PageContextProperty = BindableProperty.CreateAttached("PageContext", typeof(Context), typeof(Platform), null);
-
 		IMasterDetailPageController MasterDetailPageController => CurrentMasterDetailPage as IMasterDetailPageController;
 
 		readonly Context _context;
@@ -303,8 +301,6 @@ namespace Xamarin.Forms.Platform.Android
 
 		public static IVisualElementRenderer CreateRenderer(VisualElement element, Context context)
 		{
-			UpdateGlobalContext(element);
-
 			IVisualElementRenderer renderer = Registrar.Registered.GetHandler<IVisualElementRenderer>(element.GetType(), context) ?? new DefaultRenderer(context);
 			renderer.SetElement(element);
 
@@ -341,8 +337,6 @@ namespace Xamarin.Forms.Platform.Android
 
 		internal static IVisualElementRenderer CreateRenderer(VisualElement element, FragmentManager fragmentManager, Context context)
 		{
-			UpdateGlobalContext(element);
-
 			IVisualElementRenderer renderer = Registrar.Registered.GetHandler<IVisualElementRenderer>(element.GetType(), context) ?? new DefaultRenderer(context);
 
 			var managesFragments = renderer as IManageFragments;
@@ -351,11 +345,6 @@ namespace Xamarin.Forms.Platform.Android
 			renderer.SetElement(element);
 
 			return renderer;
-		}
-
-		internal static Context GetPageContext(BindableObject bindable)
-		{
-			return (Context)bindable.GetValue(PageContextProperty);
 		}
 
 		internal ViewGroup GetViewGroup()
@@ -466,11 +455,6 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
-		internal static void SetPageContext(BindableObject bindable, Context context)
-		{
-			bindable.SetValue(PageContextProperty, context);
-		}
-
 		internal void UpdateActionBar()
 		{
 			if (ActionBar == null || _embedded) //Fullscreen theme doesn't have action bar
@@ -564,7 +548,6 @@ namespace Xamarin.Forms.Platform.Android
 			if (GetRenderer(view) != null)
 				return;
 
-			SetPageContext(view, _context);
 			IVisualElementRenderer renderView = CreateRenderer(view, _context);
 			SetRenderer(view, renderView);
 
@@ -796,7 +779,6 @@ namespace Xamarin.Forms.Platform.Android
 			IVisualElementRenderer modalRenderer = GetRenderer(modal);
 			if (modalRenderer == null)
 			{
-				SetPageContext(modal, _context);
 				modalRenderer = CreateRenderer(modal, _context);
 				SetRenderer(modal, modalRenderer);
 
@@ -1057,24 +1039,6 @@ namespace Xamarin.Forms.Platform.Android
 			}
 			else if (actionBarUpImageView != null && navigationBarTextColor == Color.Default)
 				actionBarUpImageView.SetColorFilter(null);
-		}
-
-		static void UpdateGlobalContext(VisualElement view)
-		{
-			Element parent = view;
-			while (!Application.IsApplicationOrNull(parent.RealParent))
-				parent = parent.RealParent;
-
-			var rootPage = parent as Page;
-			if (rootPage != null)
-			{
-				// TODO hartez 2017/08/30 17:07:24 Determine whether we can do away with this whole attached prop	
-				Context context = GetPageContext(rootPage);
-#pragma warning disable 618
-				if (context != null)
-					Forms.Context = context;
-#pragma warning restore 618
-			}
 		}
 
 		internal static int GenerateViewId()

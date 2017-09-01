@@ -264,7 +264,6 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			if (Android.Platform.GetRenderer(page) != null)
 				return;
 
-			Android.Platform.SetPageContext(page, _context);
 			IVisualElementRenderer renderView = Android.Platform.CreateRenderer(page, _context);
 			Android.Platform.SetRenderer(page, renderView);
 
@@ -342,7 +341,6 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 				_backgroundView.SetWindowBackground();
 				AddView(_backgroundView);
 
-				Android.Platform.SetPageContext(modal, context);
 				_renderer = Android.Platform.CreateRenderer(modal, context);
 				Android.Platform.SetRenderer(modal, _renderer);
 

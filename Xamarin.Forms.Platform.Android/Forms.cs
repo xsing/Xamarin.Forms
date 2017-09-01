@@ -104,9 +104,6 @@ namespace Xamarin.Forms
 				viewInitialized(self, new ViewInitializedEventArgs { View = self, NativeView = nativeView });
 		}
 
-		// TODO hartez 2017/08/30 17:25:48 So do we need to make sure this gets re-inited if the context changes (activity is restarted or whatever)?	
-		// see: https://github.com/xamarin/Duplo/commit/7509e8e6d340cd0debe259008c3e7f5f97594ea1 and https://github.com/xamarin/Duplo/issues/1331
-
 		static void SetupInit(Context activity, Assembly resourceAssembly)
 		{
 #pragma warning disable 618 // Still have to set this up so obsolete code can function
