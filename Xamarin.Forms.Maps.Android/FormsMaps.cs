@@ -12,7 +12,7 @@ namespace Xamarin
 	{
 		public static bool IsInitialized { get; private set; }
 
-		// TODO hartez 2017/08/30 21:50:46 See if we can obsolete this	
+		[Obsolete("Context is obsolete as of version 3.0. Please use a local context instead.")]
 		public static Context Context { get; private set; }
 
 		public static void Init(Activity activity, Bundle bundle)
@@ -21,7 +21,9 @@ namespace Xamarin
 				return;
 			IsInitialized = true;
 
+#pragma warning disable 618 // Setting this to support custom code which may still depend on it
 			Context = activity;
+#pragma warning restore 618
 
 			MapRenderer.Bundle = bundle;
 
@@ -40,7 +42,6 @@ namespace Xamarin
 				}
 			}
 
-			// TODO hartez 2017/08/30 21:49:00 Need to make sure this gets re-initialized if Context changes	
 			new GeocoderBackend(activity).Register();
 		}
 	}
