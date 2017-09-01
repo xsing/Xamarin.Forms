@@ -8,7 +8,17 @@ namespace Xamarin.Forms.Controls.GalleryPages.PerformanceGallery.Scenarios
 	internal class ListViewScenario1 : PerformanceScenario
 	{
 		public ListViewScenario1()
-			: base("ListView with 1k ViewCells")
+			: base("[ListView] Empty")
+		{
+			View = new ListView();
+		}
+	}
+
+	[Preserve(AllMembers = true)]
+	internal class ListViewScenario2 : PerformanceScenario
+	{
+		public ListViewScenario2()
+			: base("[ListView] with 1k ViewCells")
 		{
 			View = new ListView
 			{
@@ -19,10 +29,10 @@ namespace Xamarin.Forms.Controls.GalleryPages.PerformanceGallery.Scenarios
 	}
 
 	[Preserve(AllMembers = true)]
-	internal class ListViewScenario2 : PerformanceScenario
+	internal class ListViewScenario3 : PerformanceScenario
 	{
-		public ListViewScenario2()
-			: base("ListView with 1k ViewCells & DTS")
+		public ListViewScenario3()
+			: base("[ListView] with 1k ViewCells & DTS")
 		{
 			View = new ListView
 			{
