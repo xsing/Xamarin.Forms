@@ -1063,6 +1063,7 @@ namespace Xamarin.Forms.Platform.Android
 			bool _notReallyHandled;
 			Dictionary<int, float> _minimumElevation = new Dictionary<int, float>();
 
+			[Obsolete("This constructor is obsolete as of version 3.0. Please use DefaultRenderer(Context) instead.")]
 			public DefaultRenderer()
 			{
 				ChildrenDrawingOrderEnabled = true;
@@ -1072,6 +1073,7 @@ namespace Xamarin.Forms.Platform.Android
 
 			public DefaultRenderer(Context context) : base(context)
 			{
+				ChildrenDrawingOrderEnabled = true;
 			}
 
 			internal void NotifyFakeHandling()
