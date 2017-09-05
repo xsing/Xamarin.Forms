@@ -39,6 +39,10 @@ namespace Xamarin.Forms.Controls.Issues
 		public static async Task<Dictionary<string, double>> GetScenarioResults(string deviceId)
 		{
 			var response = await _client.GetAsync(GetScenarioResultsRoute + deviceId);
+
+			if (!response.IsSuccessStatusCode)
+				return new Dictionary<string, double>();
+
 			var content = await response.Content.ReadAsStringAsync();
 			return JsonConvert.DeserializeObject<Dictionary<string, double>>(content);
 		}
