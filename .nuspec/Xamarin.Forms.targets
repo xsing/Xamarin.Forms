@@ -5,7 +5,10 @@
 
 	<PropertyGroup>
 		<EnableDefaultXamlItems Condition="'$(EnableDefaultXamlItems)'==''">True</EnableDefaultXamlItems>
+		<_DefaultXamlItemsEnabled>False</_DefaultXamlItemsEnabled>
 	</PropertyGroup>
+
+	<Import Project="$(MSBuildThisFileDirectory)Xamarin.Forms.DefaultItems.targets" Condition="'$(MSBuildSDKsPath)'!=''" />
 
 	<PropertyGroup>
 		<CoreCompileDependsOn>
