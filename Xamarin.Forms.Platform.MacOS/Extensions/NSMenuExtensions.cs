@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Linq;
 using AppKit;
 
 namespace Xamarin.Forms.Platform.macOS.Extensions
 {
 	internal static class NSMenuExtensions
 	{
+		const char Separator = '+';
+
 		public static NSMenu ToNSMenu(this Menu menus, NSMenu nsMenu = null)
 		{
 			if (nsMenu == null)
@@ -17,6 +20,7 @@ namespace Xamarin.Forms.Platform.macOS.Extensions
 				foreach (var item in menu.Items)
 				{
 					var subMenuItem = item.ToNSMenuItem();
+					GetAccelerators(subMenuItem, item);
 					subMenu.AddItem(subMenuItem);
 					item.PropertyChanged += (sender, e) => (sender as MenuItem)?.UpdateNSMenuItem(subMenuItem, new string[] { e.PropertyName });
 				}
@@ -25,6 +29,7 @@ namespace Xamarin.Forms.Platform.macOS.Extensions
 			}
 			return nsMenu;
 		}
+
 
 		public static NSMenuItem ToNSMenuItem(this MenuItem menuItem, int i = -1)
 		{
@@ -59,6 +64,47 @@ namespace Xamarin.Forms.Platform.macOS.Extensions
 						menuItem.Image = null;
 				}
 			}
+		}
+
+		static void GetAccelerators(NSMenuItem nsMenuItem, MenuItem item)
+		{
+			var accelerator = MenuItem.GetAccelerator(item);
+
+			if (accelerator == null)
+				return;
+
+			bool hasModifierMask = false;
+			var acceleratorParts = accelerator.Split(Separator);
+			hasModifierMask = (acceleratorParts.Length > 1);
+
+			if (hasModifierMask)
+			{
+				nsMenuItem.KeyEquivalentModifierMask = 0;
+
+				for (int i = 0; i < acceleratorParts.Count() - 1; i++)
+				{
+					var modifierMast = acceleratorParts[i].ToLower();
+					switch (modifierMast)
+					{
+						case "ctrl":
+							nsMenuItem.KeyEquivalentModifierMask = nsMenuItem.KeyEquivalentModifierMask | NSEventModifierMask.ControlKeyMask;
+							break;
+						case "cmd":
+							nsMenuItem.KeyEquivalentModifierMask = nsMenuItem.KeyEquivalentModifierMask | NSEventModifierMask.CommandKeyMask;
+							break;
+						case "alt":
+							nsMenuItem.KeyEquivalentModifierMask = nsMenuItem.KeyEquivalentModifierMask | NSEventModifierMask.AlternateKeyMask;
+							break;
+						case "shift":
+							nsMenuItem.KeyEquivalentModifierMask = nsMenuItem.KeyEquivalentModifierMask | NSEventModifierMask.ShiftKeyMask;
+							break;
+						case "fn":
+							nsMenuItem.KeyEquivalentModifierMask = nsMenuItem.KeyEquivalentModifierMask | NSEventModifierMask.FunctionKeyMask;
+							break;
+					}
+				}
+			}
+			nsMenuItem.KeyEquivalent = acceleratorParts.Last();
 		}
 	}
 }
