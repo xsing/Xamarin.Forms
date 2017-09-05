@@ -106,7 +106,7 @@ namespace Xamarin.Forms.Platform.MacOS
 					var view = eventTracker?._renderer?.Element as View;
 
 					if (clickGestureRecognizer != null && view != null)
-						clickGestureRecognizer.SendClicked(view);
+						clickGestureRecognizer.SendClicked(view, clickRecognizer.Buttons);
 				});
 				var uiRecognizer = CreateClickRecognizer((int)clickRecognizer.Buttons, clickRecognizer.NumberOfClicksRequired, returnAction);
 				return uiRecognizer;

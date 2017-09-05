@@ -52,13 +52,13 @@ namespace Xamarin.Forms
 		public event EventHandler Clicked;
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public void SendClicked(View sender)
+		public void SendClicked(View sender, ButtonsMask buttons)
 		{
 			ICommand cmd = Command;
 			if (cmd != null && cmd.CanExecute(CommandParameter))
 				cmd.Execute(CommandParameter);
 
-			Clicked?.Invoke(sender, new ClickedEventArgs(CommandParameter));
+			Clicked?.Invoke(sender, new ClickedEventArgs(buttons, CommandParameter));
 
 		}
 	}
