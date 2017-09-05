@@ -47,6 +47,16 @@ namespace Xamarin.Forms.Core.UnitTests
 			Assert.That (executed, Is.True);
 		}
 
+		[Test]
+		public void Accelerator()
+		{
+			var item = new MenuItem ();
+			string shourtCutKeyBinding = "ctrl+A";
+			MenuItem.SetAccelerator(item, shourtCutKeyBinding);
+		
+			Assert.AreEqual(MenuItem.GetAccelerator(item), shourtCutKeyBinding);
+		}
+		
 		protected override T CreateSource()
 		{
 			return new T();

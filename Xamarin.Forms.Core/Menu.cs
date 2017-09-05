@@ -11,6 +11,11 @@ namespace Xamarin.Forms
 
 		ObservableCollection<MenuItem> _items = new ObservableCollection<MenuItem>();
 
+		public Menu()
+		{
+			_items.CollectionChanged += (s, e) => OnPropertyChanged(nameof(Items));
+		}
+
 		public Menu this[int index]
 		{
 			get { return _menus[index]; }
