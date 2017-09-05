@@ -118,7 +118,7 @@ namespace Xamarin.Forms.Controls.Issues
 
 			var box = new BoxView { Color = Color.Red, WidthRequest = 100, HeightRequest = 100 };
 			var menuBox = new Menu();
-			AddMenu(4, true, 2, false, menuBox,true);
+			AddMenu(4, true, 2, false, menuBox, true);
 			SetMenu(box, menuBox);
 			layout.Children.Add(box);
 
@@ -146,6 +146,8 @@ namespace Xamarin.Forms.Controls.Issues
 							Application.Current.MainMenu[0].Items[0].IsEnabled = false;
 						})
 			};
+			var btnAddSubmenusWithShortcut = new Button { Text = "Add Menu Hello With submenu And shortcut", Command = new Command(() => AddMenu(1, true, 7, false, null, true, true)) };
+
 			layout.Children.Add(btn);
 			layout.Children.Add(btnAdd);
 			layout.Children.Add(btnAdd3);
@@ -153,11 +155,12 @@ namespace Xamarin.Forms.Controls.Issues
 			layout.Children.Add(btnAddImage);
 			layout.Children.Add(btnAddSubmenus);
 			layout.Children.Add(btnAddChangeText);
+			layout.Children.Add(btnAddSubmenusWithShortcut);
 			layout.Children.Add(label);
 			return new ContentPage { Title = "Menus", Content = layout };
 		}
 
-		void AddMenu(int count, bool addMenuItems = false, int countMenuItems = 1, bool withImage = false, Menu menuHolder = null, bool addSubMenu = false)
+		void AddMenu(int count, bool addMenuItems = false, int countMenuItems = 1, bool withImage = false, Menu menuHolder = null, bool addSubMenu = false, bool addShortcut = false)
 		{
 			for (int i = 0; i < count; i++)
 			{
@@ -171,10 +174,29 @@ namespace Xamarin.Forms.Controls.Issues
 						{
 							item.Icon = Icon = "bank.png";
 						}
+						if (addShortcut)
+						{
+							var shourtCutKeyBinding = $"{j}";
+							if (j == 1)
+								shourtCutKeyBinding = $"shift+{j}";
+							if (j == 2)
+								shourtCutKeyBinding = $"ctrl+{j}";
+							if (j == 3)
+								shourtCutKeyBinding = $"alt+{j}";
+							if (j == 4)
+								shourtCutKeyBinding = $"cmd+{j}";
+							if (j == 5)
+								shourtCutKeyBinding = $"fn+{j}";
+							if (j == 6)
+								shourtCutKeyBinding = $"cmd+alt+{j}";
+
+							item.Text = shourtCutKeyBinding;
+							MenuItem.SetAccelerator(item, shourtCutKeyBinding);
+						}
 						menu.Items.Add(item);
 					}
 				}
-				if(addSubMenu)
+				if (addSubMenu)
 				{
 					var submenu = new Forms.Menu { Text = $"submenu {i}" };
 					var item = new MenuItem { Text = $"submenu item {i}" };
