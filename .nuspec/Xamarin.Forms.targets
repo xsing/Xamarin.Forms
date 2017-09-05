@@ -39,11 +39,11 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<_XFTargetsImportedAgain Condition="'$_(XFTargetsImported)'=='True'">True</_XFTargetsImportedAgain>
+		<_XFTargetsImportedAgain Condition="'$(_XFTargetsImported)'=='True'">True</_XFTargetsImportedAgain>
 		<_XFTargetsImported>True</_XFTargetsImported>
 	</PropertyGroup>
 
-	<Target Name="_ValidateXFTasks" BeforeTargets="_CheckForInvalidConfigurationAndPlatform">
+	<Target Name="_ValidateXFTasks" BeforeTargets="_CheckForInvalidConfigurationAndPlatform" Condition="'$(XFDisableTargetsValidation)' != 'True'">
 		<Error
 			Text="Xamarin.Forms targets have been imported multiple times. Please check your project file and remove the duplicate import(s)."
 			Code="XF001"
