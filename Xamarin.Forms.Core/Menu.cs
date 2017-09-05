@@ -11,7 +11,11 @@ namespace Xamarin.Forms
 
 		ObservableCollection<MenuItem> _items = new ObservableCollection<MenuItem>();
 
-		public Menu this[int index] { get => _menus[index]; set => _menus[index] = value; }
+		public Menu this[int index]
+		{
+			get { return _menus[index]; }
+			set { _menus[index] = value; }
+		}
 
 		public string Text
 		{
