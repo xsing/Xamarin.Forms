@@ -139,6 +139,11 @@ namespace Xamarin.Forms
 			return 'a' + v - 10;
 		}
 
+		public void QuitApp()
+		{
+			throw new NotImplementedException();
+		}
+
 		public class _IsolatedStorageFile : IIsolatedStorageFile
 		{
 			readonly IsolatedStorageFile _isolatedStorageFile;
