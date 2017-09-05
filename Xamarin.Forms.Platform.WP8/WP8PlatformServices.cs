@@ -141,7 +141,7 @@ namespace Xamarin.Forms
 
 		public void QuitApp()
 		{
-			throw new NotImplementedException();
+			Log.Warning(nameof(WP8PlatformServices), "Platform doesn't implement QuitApp");
 		}
 
 		public class _IsolatedStorageFile : IIsolatedStorageFile
